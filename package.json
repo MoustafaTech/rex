@@ -26,6 +26,7 @@
   },
   "build": {
     "appId": "com.moustafatech.selectask",
+    "npmRebuild": false,
     "productName": "SelectAsk",
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "files": [

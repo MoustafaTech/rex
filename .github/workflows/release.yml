@@ -22,10 +22,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Linux build deps
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libx11-dev libxkbcommon-x11-dev libxtst-dev
-
       - run: npm ci
 
       - name: Build and publish
