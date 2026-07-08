@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Select text anywhere, hold Ctrl, ask AI about it — without losing focus.",
   "main": "src/main/index.js",
-  "author": "MoustafaTech",
+  "author": "MoustafaTech <moustafaessam2212@gmail.com>",
   "license": "MIT",
   "homepage": "https://moustafatech.github.io/selectask",
   "repository": {
