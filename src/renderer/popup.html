@@ -24,14 +24,14 @@
       </div>
       <div id="thread" aria-live="polite"></div>
       <form id="ask-form">
-        <input id="question" type="text" placeholder="Ask about the selection… (Enter to send)" autocomplete="off" />
-        <button id="btn-send" type="submit" title="Send">↵</button>
+        <input id="question" type="text" placeholder="Ask about the selection…" autocomplete="off" />
+        <button id="btn-send" type="submit" title="Send">↑</button>
         <button id="btn-stop" type="button" title="Stop generating" hidden>■</button>
       </form>
       <div id="quick-actions">
         <button data-q="Explain this simply.">Explain</button>
         <button data-q="Summarize this in a few bullets.">Summarize</button>
-        <button data-q="If this is code, explain what it does line by line. Otherwise, explain it in detail.">What does it do?</button>
+        <button data-q="If this is code, explain briefly what it does. Otherwise, explain it.">What is this?</button>
         <button data-q="Translate this to English. If it is already English, improve the writing.">Translate / fix</button>
       </div>
     </main>
@@ -62,8 +62,8 @@
       </label>
       <fieldset class="field">
         <span>Triggers</span>
+        <label class="check"><input id="cfg-tapctrl" type="checkbox" /> Select text, then tap <kbd>Ctrl</kbd></label>
         <label class="check"><input id="cfg-ctrlselect" type="checkbox" /> Hold <kbd>Ctrl</kbd> while selecting with the mouse</label>
-        <label class="check"><input id="cfg-doublectrl" type="checkbox" /> Double-tap <kbd>Ctrl</kbd> after selecting</label>
         <label class="check"><input id="cfg-closeblur" type="checkbox" /> Close popup when it loses focus</label>
       </fieldset>
       <div class="settings-actions">
@@ -73,6 +73,7 @@
       <p class="settings-note">Open source — <a href="https://github.com/MoustafaTech/selectask" id="link-repo">github.com/MoustafaTech/selectask</a></p>
     </main>
   </div>
+  <script src="dev-stub.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

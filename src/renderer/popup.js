@@ -9,6 +9,8 @@ const questionEl = $('question');
 const selectionChip = $('selection-chip');
 const selectionTextEl = $('selection-text');
 
+if (navigator.platform.toLowerCase().includes('mac')) document.body.classList.add('mac');
+
 let selection = '';
 let history = [];        // [{role, content}] excluding system
 let streamingEl = null;
@@ -21,6 +23,35 @@ const MODEL_PLACEHOLDERS = {
   google: 'gemini-2.5-flash',
   compatible: 'llama3.3'
 };
+
+/* ---------- view switching ----------
+   One entry point, sets both views every time, and never leaves the popup
+   blank: if something throws, the ask view is restored and the error shown. */
+
+function setView(name) {
+  const showSettingsView = name === 'settings';
+  viewAsk.hidden = showSettingsView;
+  viewSettings.hidden = !showSettingsView;
+  if (!showSettingsView) questionEl.focus();
+}
+
+async function openSettingsView() {
+  try {
+    const cfg = await window.selectask.getConfig();
+    $('cfg-provider').value = cfg.provider;
+    $('cfg-key').value = (cfg.apiKeys || {})[cfg.provider] || '';
+    $('cfg-model').value = cfg.model || '';
+    $('cfg-baseurl').value = cfg.baseUrl || '';
+    $('cfg-tapctrl').checked = !!cfg.trigger.tapCtrl;
+    $('cfg-ctrlselect').checked = !!cfg.trigger.ctrlSelect;
+    $('cfg-closeblur').checked = !!cfg.closeOnBlur;
+    syncProviderFields();
+    setView('settings');
+  } catch (err) {
+    setView('ask');
+    addMsg('error', 'Could not open settings: ' + escapeHtml(String(err.message || err)));
+  }
+}
 
 /* ---------- tiny safe markdown ---------- */
 
@@ -61,7 +92,7 @@ function renderMarkdown(src) {
     const esc = escapeHtml(line);
 
     const h = esc.match(/^(#{1,3})\s+(.*)/);
-    if (h) { closeList(); out.push(`<h${h[1].length + 0}>${inlineMd(h[2])}</h${h[1].length}>`); i++; continue; }
+    if (h) { closeList(); out.push(`<h${h[1].length}>${inlineMd(h[2])}</h${h[1].length}>`); i++; continue; }
 
     const ul = esc.match(/^\s*[-*]\s+(.*)/);
     const ol = esc.match(/^\s*\d+[.)]\s+(.*)/);
@@ -173,7 +204,7 @@ $('selection-expand').addEventListener('click', () => {
 /* ---------- session ---------- */
 
 window.selectask.onSession(async (payload) => {
-  if (payload.type === 'settings') { showSettings(); return; }
+  if (payload.type === 'settings') { openSettingsView(); return; }
   selection = payload.selection || '';
   history = [];
   thread.innerHTML = '';
@@ -182,39 +213,19 @@ window.selectask.onSession(async (payload) => {
   selectionTextEl.textContent = selection.length > 600 ? selection.slice(0, 600) + '…' : selection;
   selectionChip.classList.remove('expanded');
   $('selection-expand').textContent = 'more';
-  showAsk();
+  setView('ask');
 
-  const cfg = await window.selectask.getConfig();
-  const hasKey = cfg.provider === 'compatible' ? !!cfg.baseUrl : !!(cfg.apiKeys || {})[cfg.provider];
-  if (!hasKey) {
-    addMsg('hintline', 'Add your API key first — opening Settings.');
-    showSettings();
-    return;
-  }
-  questionEl.focus();
+  try {
+    const cfg = await window.selectask.getConfig();
+    const hasKey = cfg.provider === 'compatible' ? !!cfg.baseUrl : !!(cfg.apiKeys || {})[cfg.provider];
+    if (!hasKey) {
+      addMsg('hintline', 'Add your API key first — opening Settings.');
+      openSettingsView();
+    }
+  } catch { /* stay on ask view */ }
 });
 
-function showAsk() {
-  viewSettings.hidden = true;
-  viewAsk.hidden = false;
-  questionEl.focus();
-}
-
 /* ---------- settings ---------- */
-
-async function showSettings() {
-  const cfg = await window.selectask.getConfig();
-  $('cfg-provider').value = cfg.provider;
-  $('cfg-key').value = (cfg.apiKeys || {})[cfg.provider] || '';
-  $('cfg-model').value = cfg.model || '';
-  $('cfg-baseurl').value = cfg.baseUrl || '';
-  $('cfg-ctrlselect').checked = !!cfg.trigger.ctrlSelect;
-  $('cfg-doublectrl').checked = !!cfg.trigger.doubleCtrl;
-  $('cfg-closeblur').checked = !!cfg.closeOnBlur;
-  syncProviderFields();
-  viewAsk.hidden = true;
-  viewSettings.hidden = false;
-}
 
 function syncProviderFields() {
   const p = $('cfg-provider').value;
@@ -226,30 +237,38 @@ function syncProviderFields() {
 }
 
 $('cfg-provider').addEventListener('change', async () => {
-  const cfg = await window.selectask.getConfig();
-  $('cfg-key').value = (cfg.apiKeys || {})[$('cfg-provider').value] || '';
+  try {
+    const cfg = await window.selectask.getConfig();
+    $('cfg-key').value = (cfg.apiKeys || {})[$('cfg-provider').value] || '';
+  } catch { $('cfg-key').value = ''; }
   syncProviderFields();
 });
 
 $('btn-save').addEventListener('click', async () => {
   const provider = $('cfg-provider').value;
-  await window.selectask.setConfig({
-    provider,
-    model: $('cfg-model').value.trim() || MODEL_PLACEHOLDERS[provider],
-    baseUrl: $('cfg-baseurl').value.trim(),
-    apiKeys: { [provider]: $('cfg-key').value },
-    trigger: {
-      ctrlSelect: $('cfg-ctrlselect').checked,
-      doubleCtrl: $('cfg-doublectrl').checked,
-      hotkey: 'CommandOrControl+Shift+Space'
-    },
-    closeOnBlur: $('cfg-closeblur').checked
-  });
-  showAsk();
+  try {
+    await window.selectask.setConfig({
+      provider,
+      model: $('cfg-model').value.trim() || MODEL_PLACEHOLDERS[provider],
+      baseUrl: $('cfg-baseurl').value.trim(),
+      apiKeys: { [provider]: $('cfg-key').value },
+      trigger: {
+        tapCtrl: $('cfg-tapctrl').checked,
+        ctrlSelect: $('cfg-ctrlselect').checked,
+        hotkey: 'CommandOrControl+Shift+Space'
+      },
+      closeOnBlur: $('cfg-closeblur').checked
+    });
+  } catch (err) {
+    setView('ask');
+    addMsg('error', 'Could not save settings: ' + escapeHtml(String(err.message || err)));
+    return;
+  }
+  setView('ask');
 });
 
-$('btn-back').addEventListener('click', showAsk);
-$('btn-settings').addEventListener('click', showSettings);
+$('btn-back').addEventListener('click', () => setView('ask'));
+$('btn-settings').addEventListener('click', openSettingsView);
 $('btn-close').addEventListener('click', () => window.selectask.close());
 
 document.addEventListener('keydown', (e) => {

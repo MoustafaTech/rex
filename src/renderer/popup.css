@@ -1,21 +1,24 @@
+/* SelectAsk popup — monochrome liquid glass.
+   On macOS the window has real vibrancy behind this; elsewhere the shell is
+   smoked glass. Everything is black/white: light = emphasis, never a hue. */
+
 :root {
-  --bg: rgba(16, 19, 26, 0.96);
-  --surface: #1a2029;
-  --surface-2: #212936;
-  --line: rgba(255, 255, 255, 0.08);
-  --text: #e8ecf1;
-  --muted: #8a94a6;
-  --accent: #5b8cff;
-  --accent-soft: rgba(91, 140, 255, 0.26);
-  --danger: #ff7a7a;
-  --radius: 14px;
+  --text: #f5f5f7;
+  --muted: rgba(235, 235, 245, 0.58);
+  --glass: rgba(255, 255, 255, 0.07);
+  --glass-strong: rgba(255, 255, 255, 0.12);
+  --edge: rgba(255, 255, 255, 0.14);
+  --specular: rgba(255, 255, 255, 0.28);
+  --danger: #ff8f8f;
+  --r-window: 26px;
+  --r-card: 16px;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* the hidden attribute must win over display rules like .field { display:flex } */
+/* the hidden attribute must win over any display rule below */
 [hidden] { display: none !important; }
 
 html, body { height: 100%; background: transparent; }
@@ -28,18 +31,26 @@ body {
   overflow: hidden;
 }
 
-::selection { background: var(--accent-soft); }
+::selection { background: rgba(255, 255, 255, 0.28); }
 
 #shell {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 30%),
+    rgba(18, 18, 20, 0.55);
+  -webkit-backdrop-filter: blur(42px) saturate(160%);
+  backdrop-filter: blur(42px) saturate(160%);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-window);
   overflow: hidden;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    inset 0 1px 0 var(--specular),
+    0 24px 70px rgba(0, 0, 0, 0.55);
 }
+/* Without OS vibrancy (Windows/Linux) the glass needs its own body. */
+body:not(.mac) #shell { background: linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0) 30%), rgba(22, 22, 25, 0.92); }
 
 /* ---------- titlebar ---------- */
 
@@ -47,7 +58,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px 6px 12px;
+  padding: 10px 12px 6px 16px;
   -webkit-app-region: drag;
   flex: 0 0 auto;
 }
@@ -55,35 +66,37 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .mark {
-  width: 14px;
+  width: 15px;
   height: 8px;
-  border-radius: 2px;
-  background: var(--accent-soft);
-  border-left: 2px solid var(--accent);
+  border-radius: 3px;
+  background: var(--glass-strong);
+  border-left: 2px solid var(--text);
+  box-shadow: inset 0 1px 0 var(--specular);
 }
 
-.titlebar-actions { -webkit-app-region: no-drag; display: flex; gap: 2px; }
+.titlebar-actions { -webkit-app-region: no-drag; display: flex; gap: 4px; }
 
 .icon-btn {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: none;
-  border-radius: 6px;
+  border-radius: 50%;
   background: transparent;
   color: var(--muted);
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.icon-btn:hover { background: var(--surface-2); color: var(--text); }
+.icon-btn:hover { background: var(--glass-strong); color: var(--text); }
 
 /* ---------- ask view ---------- */
 
@@ -92,19 +105,21 @@ main {
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
-  padding: 0 12px 12px;
-  gap: 8px;
+  padding: 0 14px 14px;
+  gap: 9px;
 }
 
 #selection-chip {
   flex: 0 0 auto;
   position: relative;
-  max-height: 64px;
+  max-height: 62px;
   overflow: hidden;
-  padding: 7px 9px;
-  border-radius: 8px;
-  background: var(--accent-soft);
-  border-left: 3px solid var(--accent);
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: var(--glass);
+  border: 1px solid var(--edge);
+  border-left: 3px solid rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   font-size: 12px;
   line-height: 1.45;
   color: var(--text);
@@ -114,13 +129,13 @@ main {
 #selection-chip.expanded { max-height: 40vh; overflow-y: auto; }
 #selection-expand {
   position: absolute;
-  right: 6px;
-  bottom: 4px;
+  right: 7px;
+  bottom: 5px;
   border: none;
-  border-radius: 4px;
-  padding: 1px 6px;
+  border-radius: 999px;
+  padding: 1px 8px;
   font-size: 10px;
-  background: var(--surface-2);
+  background: rgba(0, 0, 0, 0.45);
   color: var(--muted);
   cursor: pointer;
 }
@@ -135,19 +150,21 @@ main {
   gap: 10px;
   padding: 2px 2px 2px 0;
   scrollbar-width: thin;
-  scrollbar-color: var(--surface-2) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .msg { line-height: 1.55; word-break: break-word; }
 .msg.user {
   align-self: flex-end;
   max-width: 88%;
-  background: var(--surface-2);
-  padding: 6px 10px;
-  border-radius: 10px 10px 3px 10px;
+  background: var(--glass-strong);
+  border: 1px solid var(--edge);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  padding: 6px 11px;
+  border-radius: 14px 14px 4px 14px;
   color: var(--text);
 }
-.msg.assistant { align-self: stretch; }
+.msg.assistant { align-self: stretch; color: rgba(245, 245, 247, 0.92); }
 .msg.assistant.streaming::after {
   content: "";
   display: inline-block;
@@ -155,7 +172,8 @@ main {
   height: 13px;
   margin-left: 3px;
   vertical-align: -2px;
-  background: var(--accent);
+  border-radius: 2px;
+  background: var(--text);
   animation: blink 1s steps(2) infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
@@ -166,9 +184,10 @@ main {
 .msg.error {
   color: var(--danger);
   font-size: 12px;
-  background: rgba(255, 122, 122, 0.08);
-  border-radius: 8px;
-  padding: 7px 10px;
+  background: rgba(255, 143, 143, 0.09);
+  border: 1px solid rgba(255, 143, 143, 0.25);
+  border-radius: 12px;
+  padding: 7px 11px;
 }
 .msg.error a { color: inherit; }
 
@@ -186,144 +205,158 @@ main {
 .msg li { margin: 2px 0; }
 .msg blockquote {
   margin: 5px 0;
-  padding: 2px 9px;
-  border-left: 2px solid var(--accent);
+  padding: 2px 10px;
+  border-left: 2px solid rgba(255, 255, 255, 0.5);
   color: var(--muted);
 }
 .msg code {
   font-family: var(--mono);
   font-size: 11.5px;
-  background: var(--surface-2);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 1px 5px;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 .msg pre {
-  position: relative;
-  background: #12161d;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 9px 10px;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 9px 11px;
   margin: 6px 0;
   overflow-x: auto;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
-.msg pre code { background: none; padding: 0; display: block; white-space: pre; }
-.msg a { color: var(--accent); }
+.msg pre code { background: none; border: none; padding: 0; display: block; white-space: pre; }
+.msg a { color: var(--text); text-decoration: underline; text-decoration-color: rgba(255,255,255,.4); }
 
 /* input row */
 #ask-form {
   flex: 0 0 auto;
   display: flex;
-  gap: 6px;
+  gap: 7px;
 }
 #question {
   flex: 1;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   color: var(--text);
-  padding: 8px 11px;
+  padding: 9px 15px;
   font-size: 13px;
   font-family: var(--font);
-  caret-color: var(--accent);
+  caret-color: var(--text);
   outline: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
-#question:focus { border-color: var(--accent); }
+#question:focus { background: var(--glass-strong); border-color: rgba(255, 255, 255, 0.3); }
 #question::placeholder { color: var(--muted); }
 
 #btn-send, #btn-stop {
   flex: 0 0 auto;
-  width: 34px;
+  width: 36px;
+  height: 36px;
   border: none;
-  border-radius: 9px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 14px;
+  border-radius: 50%;
+  background: var(--text);
+  color: #111;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 0.12s ease;
 }
-#btn-send:hover { filter: brightness(1.1); }
-#btn-stop { background: var(--surface-2); color: var(--danger); }
+#btn-send:hover { transform: scale(1.06); }
+#btn-stop { background: var(--glass-strong); color: var(--text); border: 1px solid var(--edge); }
 
 #quick-actions {
   flex: 0 0 auto;
   display: flex;
-  gap: 5px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 #quick-actions button {
-  border: 1px solid var(--line);
-  background: transparent;
+  border: 1px solid var(--edge);
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   color: var(--muted);
   border-radius: 999px;
-  padding: 3px 9px;
+  padding: 4px 11px;
   font-size: 11px;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-#quick-actions button:hover { color: var(--text); border-color: var(--accent); }
+#quick-actions button:hover { color: var(--text); background: var(--glass-strong); }
 
 /* ---------- settings view ---------- */
 
-#view-settings { gap: 10px; overflow-y: auto; }
+#view-settings { gap: 11px; overflow-y: auto; }
 #view-settings h2 { font-size: 14px; font-weight: 600; }
 
-.field { display: flex; flex-direction: column; gap: 4px; border: none; }
+.field { display: flex; flex-direction: column; gap: 5px; border: none; }
 .field > span {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted);
 }
 .field > span em { font-style: normal; font-weight: 400; text-transform: none; opacity: 0.8; }
 .field input[type="text"], .field input[type="password"], .field select {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   color: var(--text);
-  padding: 7px 10px;
+  padding: 8px 12px;
   font-size: 13px;
   font-family: var(--font);
   outline: none;
 }
-.field input:focus, .field select:focus { border-color: var(--accent); }
+.field select option { background: #1c1c1e; color: var(--text); }
+.field input:focus, .field select:focus { border-color: rgba(255, 255, 255, 0.32); background: var(--glass-strong); }
 
 .check {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-size: 12.5px;
   color: var(--text);
   text-transform: none;
   cursor: pointer;
 }
-.check input { accent-color: var(--accent); }
+.check input { accent-color: #f5f5f7; }
 
 kbd {
   font-family: var(--mono);
   font-size: 11px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
+  background: var(--glass-strong);
+  border: 1px solid var(--edge);
   border-bottom-width: 2px;
-  border-radius: 5px;
-  padding: 0 5px;
+  border-radius: 6px;
+  padding: 0 6px;
+  box-shadow: inset 0 1px 0 var(--specular);
 }
 
 .settings-actions { display: flex; gap: 8px; margin-top: 2px; }
 .settings-actions button {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 7px 16px;
-  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  padding: 8px 20px;
+  background: var(--glass);
   color: var(--text);
   font-size: 13px;
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
 }
-.settings-actions .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.settings-actions .primary:hover { filter: brightness(1.1); }
+.settings-actions button:hover { background: var(--glass-strong); }
+.settings-actions .primary { background: var(--text); border-color: transparent; color: #111; font-weight: 600; }
+.settings-actions .primary:hover { transform: scale(1.03); background: #fff; }
 
 .settings-note { font-size: 11px; color: var(--muted); }
-.settings-note a { color: var(--accent); text-decoration: none; }
+.settings-note a { color: var(--text); text-decoration: underline; text-decoration-color: rgba(255,255,255,.35); }
 
 button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid rgba(255, 255, 255, 0.6);
   outline-offset: 1px;
 }

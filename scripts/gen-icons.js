@@ -121,11 +121,11 @@ const bar = (y, x0, x1, h, color, alpha) =>
 
 // App icon: ink rounded square, three text lines, middle line selected.
 const appShapes = [
-  { x: 0.03, y: 0.03, w: 0.94, h: 0.94, r: 0.21, color: '#151b28' },
-  bar(0.33, 0.20, 0.64, 0.075, '#5a6580'),
-  { x: 0.155, y: 0.425, w: 0.69, h: 0.15, r: 0.045, color: '#4d7dff' },
+  { x: 0.03, y: 0.03, w: 0.94, h: 0.94, r: 0.21, color: '#151517' },
+  bar(0.33, 0.20, 0.64, 0.075, '#63666e'),
+  { x: 0.155, y: 0.425, w: 0.69, h: 0.15, r: 0.075, color: '#e9e9ee', alpha: 0.30 },
   bar(0.50, 0.20, 0.76, 0.075, '#ffffff'),
-  bar(0.67, 0.20, 0.58, 0.075, '#5a6580')
+  bar(0.67, 0.20, 0.58, 0.075, '#63666e')
 ];
 
 // Tray (macOS template): pure black, alpha carries the shape.
@@ -137,9 +137,10 @@ const trayTemplateShapes = [
 
 // Tray (Windows/Linux): white lines, blue selected band.
 const trayColorShapes = [
-  bar(0.22, 0.05, 0.78, 0.14, '#e8ecf1'),
-  { x: 0.0, y: 0.40, w: 1.0, h: 0.26, r: 0.10, color: '#4d7dff' },
-  bar(0.84, 0.05, 0.62, 0.14, '#e8ecf1')
+  bar(0.22, 0.05, 0.78, 0.14, '#f0f0f2'),
+  { x: 0.0, y: 0.40, w: 1.0, h: 0.26, r: 0.13, color: '#ffffff', alpha: 0.38 },
+  bar(0.53, 0.05, 0.90, 0.14, '#ffffff'),
+  bar(0.84, 0.05, 0.62, 0.14, '#f0f0f2')
 ];
 
 const assets = path.join(__dirname, '..', 'assets');

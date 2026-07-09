@@ -1,12 +1,13 @@
 'use strict';
 
-// Global input detection. Two gestures, both configurable:
-//   1. ctrlSelect  — hold Ctrl and select text with the mouse; fires on mouse-up.
-//   2. doubleCtrl  — select text however you like, then tap Ctrl twice quickly.
-// Either way the callback receives the current mouse position.
+// Global input detection.
+// Primary gesture (tapCtrl): select text however you like, then tap Ctrl —
+// press and release it on its own. If any other key or the mouse is used
+// while Ctrl is down (Ctrl+C, Ctrl+click, Ctrl+scroll…), the tap is void.
+// Optional gesture (ctrlSelect): hold Ctrl while selecting with the mouse;
+// fires on mouse-up.
 
 const DRAG_THRESHOLD_PX = 6;
-const DOUBLE_TAP_MS = 400;
 
 function startTrigger(getConfig, shouldIgnore, onTrigger) {
   let uIOhook, UiohookKey;
@@ -20,42 +21,34 @@ function startTrigger(getConfig, shouldIgnore, onTrigger) {
   const CTRL_CODES = new Set([UiohookKey.Ctrl, UiohookKey.CtrlRight]);
 
   let ctrlDown = false;
-  let otherKeyWhileCtrl = false;
-  let lastCtrlTap = 0;
+  let tapSpoiled = false;   // another key or the mouse was used during this Ctrl hold
   let mouseDownPos = null;
   let dragged = false;
 
   uIOhook.on('keydown', (e) => {
     if (CTRL_CODES.has(e.keycode)) {
-      ctrlDown = true;
-      otherKeyWhileCtrl = false;
+      if (!ctrlDown) { ctrlDown = true; tapSpoiled = false; }
     } else if (ctrlDown) {
-      // Ctrl+C, Ctrl+T, ... — a shortcut, not our gesture.
-      otherKeyWhileCtrl = true;
-      lastCtrlTap = 0;
-    } else {
-      lastCtrlTap = 0;
+      tapSpoiled = true; // it's a keyboard shortcut, not our gesture
     }
   });
 
   uIOhook.on('keyup', (e) => {
     if (!CTRL_CODES.has(e.keycode)) return;
+    const wasClean = ctrlDown && !tapSpoiled;
     ctrlDown = false;
+    if (!wasClean || shouldIgnore()) return;
     const cfg = getConfig();
-    if (!cfg.trigger.doubleCtrl || otherKeyWhileCtrl || shouldIgnore()) return;
-    const now = Date.now();
-    if (now - lastCtrlTap < DOUBLE_TAP_MS) {
-      lastCtrlTap = 0;
-      onTrigger({ x: e.x, y: e.y, reason: 'double-ctrl' });
-    } else {
-      lastCtrlTap = now;
-    }
+    if (!cfg.trigger.tapCtrl) return;
+    onTrigger({ x: e.x, y: e.y, reason: 'tap-ctrl' });
   });
 
+  uIOhook.on('wheel', () => { if (ctrlDown) tapSpoiled = true; });
+
   uIOhook.on('mousedown', (e) => {
+    if (ctrlDown) tapSpoiled = true; // Ctrl+click is not a tap
     mouseDownPos = { x: e.x, y: e.y };
     dragged = false;
-    lastCtrlTap = 0;
   });
 
   uIOhook.on('mousedrag', (e) => {
@@ -72,7 +65,6 @@ function startTrigger(getConfig, shouldIgnore, onTrigger) {
     if (!wasDrag || !ctrlDown) return;
     const cfg = getConfig();
     if (!cfg.trigger.ctrlSelect || shouldIgnore()) return;
-    otherKeyWhileCtrl = true; // the gesture consumed this Ctrl hold
     onTrigger({ x: e.x, y: e.y, reason: 'ctrl-select' });
   });
 

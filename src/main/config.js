@@ -11,11 +11,12 @@ const DEFAULTS = {
   baseUrl: '',           // used by "compatible" (OpenAI-compatible: Ollama, Groq, OpenRouter, ...)
   systemPrompt:
     'You are a helpful assistant inside a quick-lookup popup. The user selected a piece of text ' +
-    'on their screen and is asking about it. Be concise and direct. Use markdown. ' +
+    'on their screen and is asking about it. Answer in a summarized way: a few short sentences ' +
+    'or 2-4 bullets, never more, unless the user explicitly asks for detail. Use markdown. ' +
     'If the selection is code, assume the question is about that code.',
   trigger: {
-    ctrlSelect: true,    // hold Ctrl while selecting with the mouse
-    doubleCtrl: true,    // double-tap Ctrl to grab the current selection
+    tapCtrl: true,       // select text, then tap Ctrl on its own
+    ctrlSelect: false,   // hold Ctrl while selecting with the mouse
     hotkey: 'CommandOrControl+Shift+Space'
   },
   maxTokens: 1024,

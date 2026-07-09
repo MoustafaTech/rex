@@ -11,8 +11,8 @@ const { captureSelection } = require('./selection');
 const { streamChat } = require('./providers');
 const { startTrigger } = require('./trigger');
 
-const POPUP_WIDTH = 480;
-const POPUP_HEIGHT = 420;
+const POPUP_WIDTH = 440;
+const POPUP_HEIGHT = 380;
 
 let popup = null;
 let tray = null;
@@ -52,6 +52,10 @@ function createPopup() {
     show: false,
     frame: false,
     transparent: true,
+    // Real glass where the OS offers it; CSS smoked glass elsewhere.
+    ...(process.platform === 'darwin'
+      ? { vibrancy: 'hud', visualEffectState: 'active' }
+      : {}),
     resizable: true,
     minimizable: false,
     maximizable: false,

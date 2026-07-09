@@ -1,12 +1,12 @@
 # SelectAsk
 
-**Select text anywhere. Hold `Ctrl`. Ask AI about it — without losing your focus.**
+**Select text anywhere. Tap `Ctrl`. Ask AI about it — without losing your focus.**
 
-You're reading an AI answer, an article, or code, and one word / line / paragraph needs explaining. Instead of opening a new chat and losing your thread, just select it: a small popup appears right where you are, you ask, you get a streamed answer, you press `Esc`, and you're back to work.
+You're reading an AI answer, an article, or code, and one word / line / paragraph needs explaining. Instead of opening a new chat and losing your thread, just select it and tap `Ctrl`: a small glass popup appears right where you are, you ask, you get a short streamed answer, you press `Esc`, and you're back to work.
 
-- 🖱️ **Hold `Ctrl` + select** with the mouse → popup opens with the selection as context
-- ⌨️ Or select anything, then **double-tap `Ctrl`** — or press **`Ctrl/Cmd+Shift+Space`**
-- 💬 Ask follow-ups in the same popup; answers stream in as markdown (code blocks included)
+- 🖱️ **Select text, then tap `Ctrl`** (on its own) → popup opens with the selection as context
+- ⌨️ Also available: hold `Ctrl` while selecting (enable in Settings), or press **`Ctrl/Cmd+Shift+Space`**
+- 💬 Answers are short and summarized by default; ask follow-ups in the same popup — markdown and code blocks included
 - 🔑 **Bring your own API key** — Anthropic (Claude), OpenAI, Google (Gemini), or any OpenAI-compatible endpoint (Ollama, Groq, OpenRouter, LM Studio…)
 - 🔒 Keys are stored **only on your device**, requests go **directly to your provider**. No server, no telemetry.
 - 🖥️ macOS, Windows, Linux · open source (MIT)
@@ -33,7 +33,7 @@ Then open the tray icon → **Settings…** → pick your provider, paste your A
 
 ## How it works
 
-1. A tiny global listener watches for the trigger gesture (`uiohook-napi`).
+1. A tiny global listener watches for a clean `Ctrl` tap — no other key or mouse press during the hold (`uiohook-napi`).
 2. On trigger, your selection is captured (via the primary selection on Linux, or a simulated copy elsewhere — your clipboard is restored right after).
 3. A frameless always-on-top popup opens next to your cursor with the selection as context.
 4. Your question + selection go **straight from your machine to your AI provider**, streamed back into the popup.
