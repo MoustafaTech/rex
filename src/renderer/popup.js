@@ -6,8 +6,6 @@ const viewAsk = $('view-ask');
 const viewSettings = $('view-settings');
 const thread = $('thread');
 const questionEl = $('question');
-const selectionChip = $('selection-chip');
-const selectionTextEl = $('selection-text');
 
 if (navigator.platform.toLowerCase().includes('mac')) document.body.classList.add('mac');
 
@@ -134,6 +132,11 @@ function setBusy(v) {
   busy = v;
   $('btn-send').hidden = v;
   $('btn-stop').hidden = !v;
+  $('ask-form').classList.toggle('busy', v);
+}
+
+function syncHasText() {
+  $('ask-form').classList.toggle('has-text', questionEl.value.trim().length > 0);
 }
 
 function systemContext() {
@@ -145,6 +148,7 @@ async function ask(q) {
   addMsg('user', escapeHtml(q));
   history.push({ role: 'user', content: history.length === 0 ? `${systemContext()}\n\nQuestion: ${q}` : q });
   questionEl.value = '';
+  syncHasText();
   setBusy(true);
 
   streamingRaw = '';
@@ -181,6 +185,8 @@ $('ask-form').addEventListener('submit', (e) => {
   ask(questionEl.value);
 });
 
+questionEl.addEventListener('input', syncHasText);
+
 $('btn-stop').addEventListener('click', () => {
   window.selectask.stop();
   if (streamingEl) {
@@ -192,15 +198,6 @@ $('btn-stop').addEventListener('click', () => {
   setBusy(false);
 });
 
-document.querySelectorAll('#quick-actions button').forEach(btn => {
-  btn.addEventListener('click', () => ask(btn.dataset.q));
-});
-
-$('selection-expand').addEventListener('click', () => {
-  selectionChip.classList.toggle('expanded');
-  $('selection-expand').textContent = selectionChip.classList.contains('expanded') ? 'less' : 'more';
-});
-
 /* ---------- session ---------- */
 
 window.selectask.onSession(async (payload) => {
@@ -210,9 +207,6 @@ window.selectask.onSession(async (payload) => {
   thread.innerHTML = '';
   streamingEl = null;
   setBusy(false);
-  selectionTextEl.textContent = selection.length > 600 ? selection.slice(0, 600) + '…' : selection;
-  selectionChip.classList.remove('expanded');
-  $('selection-expand').textContent = 'more';
   setView('ask');
 
   try {

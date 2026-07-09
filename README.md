@@ -1,3 +1,5 @@
+<img src="assets/logo-badge.svg" width="72" alt="SelectAsk logo" />
+
 # SelectAsk
 
 **Select text anywhere. Tap `Ctrl`. Ask AI about it — without losing your focus.**

@@ -11,8 +11,8 @@ const { captureSelection } = require('./selection');
 const { streamChat } = require('./providers');
 const { startTrigger } = require('./trigger');
 
-const POPUP_WIDTH = 440;
-const POPUP_HEIGHT = 380;
+const POPUP_WIDTH = 420;
+const POPUP_HEIGHT = 360;
 
 let popup = null;
 let tray = null;
@@ -52,11 +52,13 @@ function createPopup() {
     show: false,
     frame: false,
     transparent: true,
-    // Real glass where the OS offers it; CSS smoked glass elsewhere.
+    // Electron's native macOS corner mask is hard-coded at 9px; the CSS
+    // radius must match it exactly or the vibrancy material pokes out at
+    // the corners. Keep roundedCorners at its default (true).
     ...(process.platform === 'darwin'
       ? { vibrancy: 'hud', visualEffectState: 'active' }
       : {}),
-    resizable: true,
+    resizable: false,
     minimizable: false,
     maximizable: false,
     fullscreenable: false,

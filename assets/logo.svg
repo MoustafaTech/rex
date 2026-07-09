@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- SelectAsk mark: a selection highlight with a text caret -->
+  <rect x="10" y="25" width="34" height="14" rx="7" fill="#ffffff" opacity="0.34"/>
+  <rect x="47" y="19" width="5" height="26" rx="2.5" fill="#ffffff"/>
+</svg>

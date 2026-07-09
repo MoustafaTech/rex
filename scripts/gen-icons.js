@@ -120,28 +120,22 @@ const bar = (y, x0, x1, h, color, alpha) =>
   ({ x: x0, y: y - h / 2, w: x1 - x0, h, r: h / 2, color, alpha });
 
 // App icon: ink rounded square, three text lines, middle line selected.
+// Logo glyph: a selection-highlight pill with a text caret at its right.
+const glyph = (pillAlpha, color) => ([
+  { x: 0.19, y: 0.40, w: 0.50, h: 0.20, r: 0.10, color, alpha: pillAlpha },
+  { x: 0.725, y: 0.31, w: 0.075, h: 0.38, r: 0.0375, color }
+]);
+
 const appShapes = [
-  { x: 0.03, y: 0.03, w: 0.94, h: 0.94, r: 0.21, color: '#151517' },
-  bar(0.33, 0.20, 0.64, 0.075, '#63666e'),
-  { x: 0.155, y: 0.425, w: 0.69, h: 0.15, r: 0.075, color: '#e9e9ee', alpha: 0.30 },
-  bar(0.50, 0.20, 0.76, 0.075, '#ffffff'),
-  bar(0.67, 0.20, 0.58, 0.075, '#63666e')
+  { x: 0.03, y: 0.03, w: 0.94, h: 0.94, r: 0.21, color: '#131316' },
+  ...glyph(0.34, '#ffffff')
 ];
 
 // Tray (macOS template): pure black, alpha carries the shape.
-const trayTemplateShapes = [
-  bar(0.22, 0.05, 0.78, 0.14, '#000000'),
-  { x: 0.0, y: 0.40, w: 1.0, h: 0.26, r: 0.10, color: '#000000' },
-  bar(0.84, 0.05, 0.62, 0.14, '#000000')
-];
+const trayTemplateShapes = glyph(0.45, '#000000');
 
-// Tray (Windows/Linux): white lines, blue selected band.
-const trayColorShapes = [
-  bar(0.22, 0.05, 0.78, 0.14, '#f0f0f2'),
-  { x: 0.0, y: 0.40, w: 1.0, h: 0.26, r: 0.13, color: '#ffffff', alpha: 0.38 },
-  bar(0.53, 0.05, 0.90, 0.14, '#ffffff'),
-  bar(0.84, 0.05, 0.62, 0.14, '#f0f0f2')
-];
+// Tray (Windows/Linux): white on transparent.
+const trayColorShapes = glyph(0.45, '#ffffff');
 
 const assets = path.join(__dirname, '..', 'assets');
 render(path.join(assets, 'icon.png'), 1024, appShapes);

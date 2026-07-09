@@ -9,7 +9,12 @@
 <body>
   <div id="shell">
     <header id="titlebar">
-      <div class="brand"><span class="mark"></span>SelectAsk</div>
+      <div class="brand" title="SelectAsk">
+        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+          <rect x="8" y="24" width="34" height="16" rx="8" />
+          <rect class="caret" x="46" y="16" width="5" height="32" rx="2.5" />
+        </svg>
+      </div>
       <div class="titlebar-actions">
         <button id="btn-settings" class="icon-btn" title="Settings" aria-label="Settings">⚙</button>
         <button id="btn-close" class="icon-btn" title="Close (Esc)" aria-label="Close">✕</button>
@@ -18,22 +23,12 @@
 
     <!-- ASK VIEW -->
     <main id="view-ask">
-      <div id="selection-chip" title="The text you selected">
-        <span id="selection-text"></span>
-        <button id="selection-expand" aria-label="Expand selection">more</button>
-      </div>
       <div id="thread" aria-live="polite"></div>
       <form id="ask-form">
-        <input id="question" type="text" placeholder="Ask about the selection…" autocomplete="off" />
-        <button id="btn-send" type="submit" title="Send">↑</button>
-        <button id="btn-stop" type="button" title="Stop generating" hidden>■</button>
+        <input id="question" type="text" placeholder="Ask about your selection…" autocomplete="off" />
+        <button id="btn-send" type="submit" title="Send" aria-label="Send">↑</button>
+        <button id="btn-stop" type="button" title="Stop generating" aria-label="Stop" hidden>■</button>
       </form>
-      <div id="quick-actions">
-        <button data-q="Explain this simply.">Explain</button>
-        <button data-q="Summarize this in a few bullets.">Summarize</button>
-        <button data-q="If this is code, explain briefly what it does. Otherwise, explain it.">What is this?</button>
-        <button data-q="Translate this to English. If it is already English, improve the writing.">Translate / fix</button>
-      </div>
     </main>
 
     <!-- SETTINGS VIEW -->

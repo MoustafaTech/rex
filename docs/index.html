@@ -7,7 +7,7 @@
 <meta name="description" content="A free, open-source desktop app for macOS, Windows and Linux. Hold Ctrl, select any text on your screen, and ask AI about it in a popup — without opening a new chat or losing your flow. Bring your own API key." />
 <meta property="og:title" content="SelectAsk — select text anywhere, ask AI, keep your focus" />
 <meta property="og:description" content="Hold Ctrl, select text, ask AI. Open source, bring your own key. macOS · Windows · Linux." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='1' y='1' width='30' height='30' rx='8' fill='%23161618'/><rect x='6' y='8' width='15' height='3' rx='1.5' fill='%23666a72'/><rect x='4.5' y='13' width='23' height='6' rx='3' fill='%23e9e9ee' opacity='.28'/><rect x='6' y='14.7' width='19' height='2.8' rx='1.4' fill='white'/><rect x='6' y='21.5' width='12' height='3' rx='1.5' fill='%23666a72'/></svg>" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='1' y='1' width='30' height='30' rx='7' fill='%23131316'/><rect x='6' y='13' width='15' height='6.5' rx='3.25' fill='white' opacity='.34'/><rect x='22.75' y='10' width='2.25' height='12' rx='1.1' fill='white'/></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
@@ -67,8 +67,14 @@ nav {
 }
 .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 19px; color: var(--text); }
 .logo:hover { text-decoration: none; }
-.logo-mark { width: 26px; height: 26px; border-radius: 7px; background: #151b28; display: grid; place-items: center; }
-.logo-mark span { display: block; width: 16px; height: 7px; border-radius: 2px; background: var(--sel); border-left: 2.5px solid var(--accent); }
+.logo-mark {
+  width: 26px; height: 26px; border-radius: 8px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
+  display: grid; place-items: center;
+}
+.logo-mark svg { width: 20px; height: 20px; display: block; }
 .nav-links { display: flex; gap: 22px; align-items: center; font-size: 14.5px; }
 .nav-links a { color: var(--muted); }
 .nav-links a:hover { color: var(--text); text-decoration: none; }
@@ -149,7 +155,7 @@ h1 {
 }
 .demo.play .mini-popup { opacity: 1; transform: none; transition-delay: 1.35s; }
 .mini-popup .mp-head { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; }
-.mini-popup .mp-head span { width: 13px; height: 7px; border-radius: 2px; background: var(--sel); border-left: 2px solid var(--accent); }
+.mini-popup .mp-head svg { width: 14px; height: 14px; }
 .mini-popup .mp-q { background: var(--surface); border-radius: 9px 9px 3px 9px; padding: 6px 10px; margin-bottom: 9px; margin-left: 40px; }
 .mini-popup .mp-a { color: var(--muted); line-height: 1.55; min-height: 3.2em; }
 .mini-popup .mp-a b { color: var(--text); font-weight: 600; }
@@ -253,7 +259,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 <div class="wrap">
 
 <nav>
-  <a class="logo" href="#"><span class="logo-mark"><span></span></span>SelectAsk</a>
+  <a class="logo" href="#"><span class="logo-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="25" width="34" height="14" rx="7" fill="#fff" opacity=".34"/><rect x="47" y="19" width="5" height="26" rx="2.5" fill="#fff"/></svg></span>SelectAsk</a>
   <div class="nav-links">
     <a href="#how">How it works</a>
     <a href="#install">Install</a>
@@ -276,7 +282,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
     <p>…the scheduler avoids starvation by using <span class="demo-sel">a multilevel feedback queue, demoting processes that exhaust their quantum</span> and periodically boosting all
     processes back to the top priority level, which bounds the waiting time of any process…</p>
     <div class="mini-popup" aria-hidden="true">
-      <div class="mp-head"><span></span>SelectAsk</div>
+      <div class="mp-head"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="25" width="34" height="14" rx="7" fill="#fff" opacity=".34"/><rect x="47" y="19" width="5" height="26" rx="2.5" fill="#fff"/></svg>SelectAsk</div>
       <div class="mp-q">explain like I'm new to OS design</div>
       <div class="mp-a" id="mp-answer"></div>
     </div>
@@ -302,7 +308,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   <p class="sec-sub">Works on top of anything — AI chats, docs, PDFs, code editors, terminals, browsers.</p>
   <div class="steps">
     <div class="step reveal"><span class="k">step 1</span><h3>Select, then tap <kbd>Ctrl</kbd></h3><p>Select any text, tap <kbd>Ctrl</kbd> on its own, and the popup appears. Holding <kbd>Ctrl</kbd> while selecting and <kbd>Ctrl/Cmd + Shift + Space</kbd> work too.</p></div>
-    <div class="step reveal"><span class="k">step 2</span><h3>Ask anything</h3><p>The popup opens at your cursor with the selection as context. Type a question or hit a one-click action: Explain, Summarize, Translate.</p></div>
+    <div class="step reveal"><span class="k">step 2</span><h3>Ask anything</h3><p>A minimal glass popup opens at your cursor with your selection as hidden context — just type your question and press Enter.</p></div>
     <div class="step reveal"><span class="k">step 3</span><h3>Read, then <kbd>Esc</kbd></h3><p>A short, summarized answer streams in as markdown — code blocks included. Ask follow-ups, or press <kbd>Esc</kbd> and you're exactly where you left off.</p></div>
   </div>
 </section>
