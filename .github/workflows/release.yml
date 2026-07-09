@@ -22,7 +22,9 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm ci
+      # retry: the Electron binary download 504s transiently on some runners
+      - run: npm ci || npm ci || (sleep 30 && npm ci)
+        shell: bash
 
       - name: Build and publish
         if: runner.os != 'Windows'
