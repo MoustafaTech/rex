@@ -3,19 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;" />
-  <title>SelectAsk</title>
+  <title>Rexplain</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <div id="shell">
     <header id="titlebar">
-      <div class="brand" title="SelectAsk">
-        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
-          <rect class="dim" x="11.5" y="16.6" width="35.8" height="4.8" rx="2.4" />
-          <rect class="bright" x="9.6" y="27.5" width="37.1" height="12.2" rx="6.1" />
-          <rect class="dim" x="12.8" y="44.8" width="28.2" height="4.8" rx="2.4" />
-          <polygon class="bright" points="51.2,12.8 55.7,21.8 51.2,30.7 46.7,21.8" />
-          <polygon class="bright" points="42.2,21.8 51.2,17.3 60.2,21.8 51.2,26.2" />
+      <div class="brand" title="Rexplain">
+        <svg class="logo" viewBox="0 0 22 22" aria-hidden="true" shape-rendering="crispEdges">
+          <path d="M14 0h8v1h-8zM13 1h2v1h-2zM16 1h6v1h-6zM13 2h9v1h-9zM13 3h9v1h-9zM13 4h5v1h-5zM13 5h8v1h-8zM13 6h5v1h-5zM0 7h1v1h-1zM13 7h4v1h-4zM0 8h1v1h-1zM12 8h5v1h-5zM0 9h2v1h-2zM11 9h6v1h-6zM0 10h3v1h-3zM10 10h10v1h-10zM0 11h4v1h-4zM9 11h11v1h-11zM0 12h5v1h-5zM8 12h10v1h-10zM0 13h19v1h-19zM1 14h17v1h-17zM2 15h15v1h-15zM3 16h13v1h-13zM4 17h11v1h-11zM5 18h4v1h-4zM11 18h4v1h-4zM5 19h3v1h-3zM12 19h3v1h-3zM5 20h2v1h-2zM13 20h2v1h-2zM5 21h3v1h-3zM13 21h3v1h-3z"/>
         </svg>
       </div>
       <div class="titlebar-actions">
@@ -27,6 +23,7 @@
     <!-- ASK VIEW -->
     <main id="view-ask">
       <div id="thread" aria-live="polite"></div>
+      <canvas id="dino-strip" height="52" hidden aria-hidden="true"></canvas>
       <form id="ask-form">
         <input id="question" type="text" placeholder="Ask about your selection…" autocomplete="off" />
         <button id="btn-send" type="submit" title="Send" aria-label="Send">↑</button>
@@ -68,7 +65,7 @@
         <button id="btn-save" class="primary">Save</button>
         <button id="btn-back">Back</button>
       </div>
-      <p class="settings-note">Open source — <a href="https://github.com/MoustafaTech/selectask" id="link-repo">github.com/MoustafaTech/selectask</a></p>
+      <p class="settings-note">Open source — <a href="https://github.com/MoustafaTech/rexplain" id="link-repo">github.com/MoustafaTech/rexplain</a></p>
     </main>
   </div>
   <script src="dev-stub.js"></script>

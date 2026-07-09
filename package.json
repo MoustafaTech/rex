@@ -1,15 +1,15 @@
 {
-  "name": "selectask",
-  "productName": "SelectAsk",
-  "version": "0.3.1",
-  "description": "Select text anywhere, hold Ctrl, ask AI about it — without losing focus.",
+  "name": "rexplain",
+  "productName": "Rexplain",
+  "version": "0.4.0",
+  "description": "Select text anywhere, tap Ctrl, and a little dino fetches you an AI answer \u2014 without losing your focus.",
   "main": "src/main/index.js",
   "author": "MoustafaTech <moustafaessam2212@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/MoustafaTech/selectask",
+  "homepage": "https://github.com/MoustafaTech/rexplain",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MoustafaTech/selectask.git"
+    "url": "https://github.com/MoustafaTech/rexplain.git"
   },
   "scripts": {
     "start": "electron .",
@@ -25,9 +25,9 @@
     "electron-builder": "^25.1.8"
   },
   "build": {
-    "appId": "com.moustafatech.selectask",
+    "appId": "com.moustafatech.rexplain",
     "npmRebuild": false,
-    "productName": "SelectAsk",
+    "productName": "Rexplain",
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "files": [
       "src/**/*",
@@ -40,24 +40,41 @@
     "publish": {
       "provider": "github",
       "owner": "MoustafaTech",
-      "repo": "selectask"
+      "repo": "rexplain"
     },
     "mac": {
       "category": "public.app-category.productivity",
       "icon": "assets/icon.png",
       "target": [
-        { "target": "dmg", "arch": ["arm64", "x64"] },
-        { "target": "zip", "arch": ["arm64", "x64"] }
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
       ],
       "extendInfo": {
-        "NSAppleEventsUsageDescription": "SelectAsk simulates a copy keystroke to capture the text you selected.",
+        "NSAppleEventsUsageDescription": "Rexplain simulates a copy keystroke to capture the text you selected.",
         "LSUIElement": true
       }
     },
     "win": {
       "icon": "assets/icon.png",
       "target": [
-        { "target": "nsis", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "nsis": {
@@ -67,7 +84,10 @@
     "linux": {
       "icon": "assets/icon.png",
       "category": "Utility",
-      "target": ["AppImage", "deb"]
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     }
   }
 }

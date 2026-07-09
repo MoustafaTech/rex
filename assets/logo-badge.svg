@@ -1,9 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- SelectAsk badge: the mark on its app-icon tile, for light backgrounds -->
+  <!-- Rexplain badge: pixel T-Rex on its app tile, for light backgrounds -->
   <rect x="2" y="2" width="60" height="60" rx="14" fill="#131316"/>
-  <rect x="13.3" y="18.6" width="33.6" height="4.5" rx="2.25" fill="#ffffff" opacity="0.32"/>
-  <rect x="11.5" y="28.8" width="34.8" height="11.4" rx="5.7" fill="#ffffff"/>
-  <rect x="14.5" y="45" width="26.4" height="4.5" rx="2.25" fill="#ffffff" opacity="0.32"/>
-  <polygon points="50,14 54.2,22.4 50,30.8 45.8,22.4" fill="#ffffff"/>
-  <polygon points="41.6,22.4 50,18.2 58.4,22.4 50,26.6" fill="#ffffff"/>
+  <g transform="translate(11.5,11.5) scale(0.64)">
+  <rect x="40.73" y="0.00" width="23.27" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="2.91" width="5.82" height="2.97" fill="#ffffff"/>
+  <rect x="46.55" y="2.91" width="17.45" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="5.82" width="26.18" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="8.73" width="26.18" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="11.64" width="14.55" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="14.55" width="23.27" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="17.45" width="14.55" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="20.36" width="2.91" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="20.36" width="11.64" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="23.27" width="2.91" height="2.97" fill="#ffffff"/>
+  <rect x="34.91" y="23.27" width="14.55" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="26.18" width="5.82" height="2.97" fill="#ffffff"/>
+  <rect x="32.00" y="26.18" width="17.45" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="29.09" width="8.73" height="2.97" fill="#ffffff"/>
+  <rect x="29.09" y="29.09" width="29.09" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="32.00" width="11.64" height="2.97" fill="#ffffff"/>
+  <rect x="26.18" y="32.00" width="32.00" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="34.91" width="14.55" height="2.97" fill="#ffffff"/>
+  <rect x="23.27" y="34.91" width="29.09" height="2.97" fill="#ffffff"/>
+  <rect x="0.00" y="37.82" width="55.27" height="2.97" fill="#ffffff"/>
+  <rect x="2.91" y="40.73" width="49.45" height="2.97" fill="#ffffff"/>
+  <rect x="5.82" y="43.64" width="43.64" height="2.97" fill="#ffffff"/>
+  <rect x="8.73" y="46.55" width="37.82" height="2.97" fill="#ffffff"/>
+  <rect x="11.64" y="49.45" width="32.00" height="2.97" fill="#ffffff"/>
+  <rect x="14.55" y="52.36" width="11.64" height="2.97" fill="#ffffff"/>
+  <rect x="32.00" y="52.36" width="11.64" height="2.97" fill="#ffffff"/>
+  <rect x="14.55" y="55.27" width="8.73" height="2.97" fill="#ffffff"/>
+  <rect x="34.91" y="55.27" width="8.73" height="2.97" fill="#ffffff"/>
+  <rect x="14.55" y="58.18" width="5.82" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="58.18" width="5.82" height="2.97" fill="#ffffff"/>
+  <rect x="14.55" y="61.09" width="8.73" height="2.97" fill="#ffffff"/>
+  <rect x="37.82" y="61.09" width="8.73" height="2.97" fill="#ffffff"/>
+  </g>
 </svg>

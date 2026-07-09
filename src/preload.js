@@ -2,7 +2,7 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('selectask', {
+contextBridge.exposeInMainWorld('rexplain', {
   getConfig: () => ipcRenderer.invoke('config:get'),
   setConfig: (patch) => ipcRenderer.invoke('config:set', patch),
   ask: (messages) => ipcRenderer.invoke('ask', messages),

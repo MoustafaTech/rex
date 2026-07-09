@@ -1,14 +1,15 @@
-<img src="assets/logo-badge.svg" width="72" alt="SelectAsk logo" />
+<img src="assets/logo-badge.svg" width="72" alt="Rexplain logo — a pixel T-Rex" />
 
-# SelectAsk
+# Rexplain 🦖
 
-**Select text anywhere. Tap `Ctrl`. Ask AI about it — without losing your focus.**
+**Select text anywhere. Tap `Ctrl`. A little dino fetches you the answer.**
 
-You're reading an article, an AI answer, code, or an error message, and one word / line / paragraph needs explaining. Instead of opening a new chat and losing your thread: select it, tap `Ctrl`, and a small glass popup opens right where you are. Ask, read the short streamed answer, press `Esc`, and you're back to work.
+You're reading an article, an AI answer, code, or a scary error message, and one word / line / paragraph needs explaining. Instead of opening a new chat and losing your thread: select it and tap `Ctrl` — a small glass popup opens right where you are, a pixel dino jogs across the panel while your model thinks, and a short answer streams in. `Esc`, and you're back to work.
 
 - 🖱️ **Select text, then tap `Ctrl`** (on its own) → a minimal popup opens with your selection as context
-- ⌨️ Also available: hold `Ctrl` while selecting (enable in Settings), or press `Ctrl/Cmd+Shift+Space`
+- 🦖 While the answer generates, the resident T-Rex runs and hops cacti in the panel — the wait is the fun part
 - 💬 Answers are short and summarized by default; ask follow-ups in the same popup — markdown and code blocks included
+- ⌨️ Also available: hold `Ctrl` while selecting (enable in Settings), or press `Ctrl/Cmd+Shift+Space`
 - 🔑 **Bring your own API key** — Anthropic (Claude), OpenAI, Google (Gemini), or any OpenAI-compatible endpoint (Ollama, Groq, OpenRouter, LM Studio…)
 - 🔒 Keys are stored **only on your device**; requests go **directly to your provider**. No server, no account, no telemetry.
 - 🖥️ macOS, Windows, Linux · MIT licensed
@@ -17,21 +18,21 @@ You're reading an article, an AI answer, code, or an error message, and one word
 
 ## Install (prebuilt)
 
-Download from the **[latest release](https://github.com/MoustafaTech/selectask/releases/latest)**.
+Download from the **[latest release](https://github.com/MoustafaTech/rexplain/releases/latest)**.
 
 ### macOS
 
-1. Download `SelectAsk-x.y.z-mac-arm64.dmg` (Apple Silicon) or `SelectAsk-x.y.z-mac-x64.dmg` (Intel).
-2. Open the dmg and drag **SelectAsk** into **Applications**.
-3. First launch: the app is unsigned, so **right-click the app → Open → Open** (a normal double-click will be blocked by Gatekeeper).
-4. Grant **Accessibility** access when asked (System Settings → Privacy & Security → Accessibility → enable SelectAsk), then quit and reopen the app. This permission is what lets it see the `Ctrl` tap and copy your selection.
-5. Find the SelectAsk icon in the **menu bar** (there is no Dock icon) → **Settings…** → pick a provider, paste your API key, set a model. Done.
+1. Download `Rexplain-x.y.z-mac-arm64.dmg` (Apple Silicon) or `Rexplain-x.y.z-mac-x64.dmg` (Intel).
+2. Open the dmg and drag **Rexplain** into **Applications**.
+3. First launch: the app is unsigned, so **right-click the app → Open → Open** (a plain double-click gets blocked by Gatekeeper).
+4. Grant **Accessibility** access when asked (System Settings → Privacy & Security → Accessibility → enable Rexplain), then quit and reopen. This is what lets the dino hear your `Ctrl` tap and copy your selection.
+5. Find the dino in the **menu bar** (there is no Dock icon) → **Settings…** → pick a provider, paste your API key, set a model. Done.
 
 ### Windows
 
-1. Download `SelectAsk-x.y.z-win-x64.exe`.
+1. Download `Rexplain-x.y.z-win-x64.exe`.
 2. Run it. SmartScreen will warn because the binary is unsigned — click **More info → Run anyway**.
-3. The installer launches SelectAsk automatically; it lives in the **system tray** (bottom-right, near the clock).
+3. The installer launches Rexplain automatically; the dino lives in the **system tray** (bottom-right, near the clock).
 4. Tray icon → **Settings…** → provider, API key, model. Done.
 
 ### Linux
@@ -39,15 +40,15 @@ Download from the **[latest release](https://github.com/MoustafaTech/selectask/r
 **AppImage (any distro):**
 
 ```bash
-chmod +x SelectAsk-x.y.z-linux-x86_64.AppImage
-./SelectAsk-x.y.z-linux-x86_64.AppImage
+chmod +x Rexplain-x.y.z-linux-x86_64.AppImage
+./Rexplain-x.y.z-linux-x86_64.AppImage
 ```
 
 **Debian / Ubuntu (.deb):**
 
 ```bash
-sudo dpkg -i SelectAsk-x.y.z-linux-amd64.deb
-selectask
+sudo dpkg -i Rexplain-x.y.z-linux-amd64.deb
+rexplain
 ```
 
 For the smoothest selection capture install the clipboard helpers:
@@ -59,7 +60,7 @@ sudo apt install xclip xdotool
 sudo apt install wl-clipboard
 ```
 
-SelectAsk sits in your **system tray**. Tray icon → **Settings…** → provider, API key, model. Done.
+The dino sits in your **system tray**. Tray icon → **Settings…** → provider, API key, model. Done.
 
 ---
 
@@ -68,8 +69,8 @@ SelectAsk sits in your **system tray**. Tray icon → **Settings…** → provid
 Requirements: [Node.js](https://nodejs.org) 20+ and git — that's it on every OS (native input hooks ship as prebuilt binaries, no compiler needed).
 
 ```bash
-git clone https://github.com/MoustafaTech/selectask.git
-cd selectask
+git clone https://github.com/MoustafaTech/rexplain.git
+cd rexplain
 npm install
 npm start
 ```
@@ -77,13 +78,13 @@ npm start
 Per-OS notes:
 
 - **macOS**: on first `npm start`, grant Accessibility access to the app that launched it (System Settings → Privacy & Security → Accessibility), then restart it. Without this the `Ctrl` gestures can't be detected.
-- **Windows**: no extra steps. If the popup doesn't appear, check the tray for the icon.
+- **Windows**: no extra steps. If the popup doesn't appear, check the tray for the dino.
 - **Linux**: install `xclip` + `xdotool` (X11) or `wl-clipboard` (Wayland) as above. On Wayland, selection capture uses the primary selection.
 
 Debug mode (prints every trigger and capture to the terminal):
 
 ```bash
-SELECTASK_DEBUG=1 npm start
+REXPLAIN_DEBUG=1 npm start
 ```
 
 Build installers for your current OS into `release/`:
@@ -98,7 +99,7 @@ npm run dist
 
 1. **Select** any text in any app — browser, editor, PDF, terminal.
 2. **Tap `Ctrl`** once, on its own. (A tap "spoils" if you press any other key or use the mouse while `Ctrl` is down, so `Ctrl+C` / `Ctrl+click` never open the popup.)
-3. The popup opens at your cursor. **Type your question**, press `Enter`, read the streamed answer, ask follow-ups.
+3. The popup opens at your cursor. **Type your question**, press `Enter`, and watch the dino run while the answer streams in.
 4. Press **`Esc`** (or click elsewhere) to dismiss and get back to what you were doing.
 
 Other triggers: `Ctrl/Cmd+Shift+Space` grabs the current selection from anywhere; hold-`Ctrl`-while-selecting can be enabled in Settings.
@@ -116,7 +117,7 @@ Open **Settings** from the popup's gear icon or the tray menu.
 
 **Base URL** is only needed for the OpenAI-compatible option — leave it empty otherwise. If you mistype a model name the popup shows the provider's error inline; fix it in Settings and re-ask.
 
-Config lives in the standard per-user app-data dir (`~/Library/Application Support/SelectAsk` on macOS, `%APPDATA%/SelectAsk` on Windows, `~/.config/SelectAsk` on Linux), permissions `0600`.
+Config lives in the standard per-user app-data dir (`~/Library/Application Support/Rexplain` on macOS, `%APPDATA%/Rexplain` on Windows, `~/.config/Rexplain` on Linux), permissions `0600`. Upgrading from the app's earlier life as *SelectAsk*? Your config is migrated automatically on first launch.
 
 ## How it works
 
@@ -124,6 +125,8 @@ Config lives in the standard per-user app-data dir (`~/Library/Application Suppo
 2. Your selection is captured via the primary selection on Linux, or a simulated copy elsewhere (your clipboard is restored immediately after).
 3. A frameless always-on-top popup opens next to your cursor; on macOS it uses native vibrancy for real glass.
 4. Your question + selection go **straight from your machine to your AI provider**, streamed back into the popup. There is no middleman server.
+
+The runner dino is original pixel art drawn for this project — a homage to everyone's favorite offline companion, not a copy of it.
 
 ## Privacy
 

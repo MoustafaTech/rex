@@ -124,8 +124,7 @@ body:not(.mac) #shell {
 
 .brand { display: flex; align-items: center; }
 .logo { width: 16px; height: 16px; display: block; }
-.logo .dim { fill: rgba(235, 235, 245, 0.28); }
-.logo .bright { fill: var(--fg-secondary); }
+.logo path { fill: var(--fg-secondary); }
 
 .titlebar-actions { -webkit-app-region: no-drag; display: flex; gap: 2px; }
 
@@ -198,7 +197,6 @@ main {
 @keyframes blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .msg.assistant.streaming::after { animation: none; }
-  #ask-form.busy::before { animation: none; }
 }
 
 .msg.error {
@@ -268,23 +266,13 @@ main {
   background: rgba(255, 255, 255, 0.09);
   box-shadow: var(--focus-ring), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-/* 1px shimmer while generating */
-#ask-form.busy::before {
-  content: "";
-  position: absolute;
-  top: -11px;
-  left: 8px;
-  right: 8px;
-  height: 1px;
-  border-radius: 1px;
-  background: linear-gradient(90deg,
-    transparent, rgba(255, 255, 255, 0.45), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
-}
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+/* the dino runner plays while generating */
+#dino-strip {
+  flex: none;
+  align-self: stretch;
+  height: 52px;
+  margin: 0 14px;
+  display: block;
 }
 
 #question {

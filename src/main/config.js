@@ -29,8 +29,22 @@ function file() {
   return path.join(app.getPath('userData'), 'config.json');
 }
 
+// One-time migration: the app used to be called SelectAsk, and userData
+// paths derive from the product name.
+function migrateLegacyConfig() {
+  try {
+    if (fs.existsSync(file())) return;
+    const legacy = path.join(app.getPath('userData'), '..', 'SelectAsk', 'config.json');
+    if (fs.existsSync(legacy)) {
+      fs.mkdirSync(path.dirname(file()), { recursive: true });
+      fs.copyFileSync(legacy, file());
+    }
+  } catch { /* fresh start is fine */ }
+}
+
 function load() {
   if (cached) return cached;
+  migrateLegacyConfig();
   try {
     const raw = JSON.parse(fs.readFileSync(file(), 'utf8'));
     cached = {

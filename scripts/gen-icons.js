@@ -134,28 +134,73 @@ const bar = (y, x0, x1, h, color, alpha) =>
   ({ x: x0, y: y - h / 2, w: x1 - x0, h, r: h / 2, color, alpha });
 
 // App icon: ink rounded square, three text lines, middle line selected.
-// Logo glyph: two faint text lines, a solid selected line, and an AI
-// sparkle touching the selection — "ask AI about the text you selected".
-const glyph = (dimAlpha, color) => ([
-  { x: 0.18, y: 0.26, w: 0.56, h: 0.075, r: 0.037, color, alpha: dimAlpha },
-  { x: 0.15, y: 0.43, w: 0.58, h: 0.19, r: 0.095, color },
-  { x: 0.20, y: 0.70, w: 0.44, h: 0.075, r: 0.037, color, alpha: dimAlpha },
-  { pts: [[0.80, 0.20], [0.87, 0.34], [0.80, 0.48]], color },
-  { pts: [[0.80, 0.20], [0.73, 0.34], [0.80, 0.48]], color },
-  { pts: [[0.66, 0.34], [0.80, 0.27], [0.94, 0.34]], color },
-  { pts: [[0.66, 0.34], [0.80, 0.41], [0.94, 0.34]], color }
-]);
+// Logo: an original pixel T-Rex in the offline-runner style.
+// '#' = pixel; the eye is the hole at row 1.
+const DINO = [
+  '..............########',
+  '.............##.######',
+  '.............#########',
+  '.............#########',
+  '.............#####....',
+  '.............########.',
+  '.............#####....',
+  '#............####.....',
+  '#...........#####.....',
+  '##.........######.....',
+  '###.......##########..',
+  '####.....###########..',
+  '#####...##########....',
+  '###################...',
+  '.#################....',
+  '..###############.....',
+  '...#############......',
+  '....###########.......',
+  '.....####..####.......',
+  '.....###....###.......',
+  '.....##......##.......',
+  '.....###.....###......'
+];
+
+// merge horizontal pixel runs into rects; box in unit coords
+function bitmapShapes(bitmap, box, color, alpha) {
+  const H = bitmap.length, W = bitmap[0].length;
+  for (const row of bitmap) if (row.length !== W) throw new Error('ragged bitmap: ' + row);
+  const px = box.size / Math.max(W, H);
+  const ox = box.x + (box.size - W * px) / 2;
+  const oy = box.y + (box.size - H * px) / 2;
+  const shapes = [];
+  for (let y = 0; y < H; y++) {
+    let x = 0;
+    while (x < W) {
+      if (bitmap[y][x] === '#') {
+        let x2 = x;
+        while (x2 < W && bitmap[y][x2] === '#') x2++;
+        // 1.02 overlap hides antialiasing seams between adjacent rows
+        shapes.push({ x: ox + x * px, y: oy + y * px, w: (x2 - x) * px, h: px * 1.02, r: 0, color, alpha });
+        x = x2;
+      } else x++;
+    }
+  }
+  return shapes;
+}
+
+function bitmapSvgRects(bitmap, size, fill) {
+  const shapes = bitmapShapes(bitmap, { x: 0, y: 0, size: 1 }, fill);
+  return shapes.map(s =>
+    `  <rect x="${(s.x * size).toFixed(2)}" y="${(s.y * size).toFixed(2)}" width="${(s.w * size).toFixed(2)}" height="${(s.h * size).toFixed(2)}" fill="${fill}"/>`
+  ).join('\n');
+}
 
 const appShapes = [
   { x: 0.03, y: 0.03, w: 0.94, h: 0.94, r: 0.21, color: '#131316' },
-  ...glyph(0.32, '#ffffff')
+  ...bitmapShapes(DINO, { x: 0.17, y: 0.17, size: 0.66 }, '#ffffff')
 ];
 
 // Tray (macOS template): pure black, alpha carries the shape.
-const trayTemplateShapes = glyph(0.45, '#000000');
+const trayTemplateShapes = bitmapShapes(DINO, { x: 0.04, y: 0.04, size: 0.92 }, '#000000');
 
 // Tray (Windows/Linux): white on transparent.
-const trayColorShapes = glyph(0.45, '#ffffff');
+const trayColorShapes = bitmapShapes(DINO, { x: 0.04, y: 0.04, size: 0.92 }, '#ffffff');
 
 if (require.main === module) {
   const assets = path.join(__dirname, '..', 'assets');
@@ -163,6 +208,23 @@ if (require.main === module) {
   render(path.join(assets, 'trayTemplate.png'), 22, trayTemplateShapes);
   render(path.join(assets, 'trayTemplate@2x.png'), 44, trayTemplateShapes);
   render(path.join(assets, 'tray.png'), 32, trayColorShapes);
+
+  fs.writeFileSync(path.join(assets, 'logo.svg'),
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Rexplain mark: pixel T-Rex -->
+${bitmapSvgRects(DINO, 64, '#ffffff')}
+</svg>
+`);
+  fs.writeFileSync(path.join(assets, 'logo-badge.svg'),
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Rexplain badge: pixel T-Rex on its app tile, for light backgrounds -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#131316"/>
+  <g transform="translate(11.5,11.5) scale(0.64)">
+${bitmapSvgRects(DINO, 64, '#ffffff')}
+  </g>
+</svg>
+`);
+  console.log('wrote assets/logo.svg, assets/logo-badge.svg');
 }
 
-module.exports = { render, bar };
+module.exports = { render, bar, bitmapShapes, DINO };

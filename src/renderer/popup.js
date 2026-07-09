@@ -35,7 +35,7 @@ function setView(name) {
 
 async function openSettingsView() {
   try {
-    const cfg = await window.selectask.getConfig();
+    const cfg = await window.rexplain.getConfig();
     $('cfg-provider').value = cfg.provider;
     $('cfg-key').value = (cfg.apiKeys || {})[cfg.provider] || '';
     $('cfg-model').value = cfg.model || '';
@@ -133,6 +133,148 @@ function setBusy(v) {
   $('btn-send').hidden = v;
   $('btn-stop').hidden = !v;
   $('ask-form').classList.toggle('busy', v);
+  if (v) startRunner(); else stopRunner();
+}
+
+/* ---------- dino runner (plays while the answer generates) ---------- */
+
+const DINO_FRAMES = (() => {
+  const base = [
+    '..............########',
+    '.............##.######',
+    '.............#########',
+    '.............#########',
+    '.............#####....',
+    '.............########.',
+    '.............#####....',
+    '#............####.....',
+    '#...........#####.....',
+    '##.........######.....',
+    '###.......##########..',
+    '####.....###########..',
+    '#####...##########....',
+    '###################...',
+    '.#################....',
+    '..###############.....',
+    '...#############......',
+    '....###########.......',
+    '.....####..####.......'
+  ];
+  const legsA = [
+    '.....###....###.......',
+    '.....##......##.......',
+    '.....###.....###......'
+  ];
+  const legsB = [
+    '.....###.....##.......',
+    '.....####....##.......',
+    '.............###......'
+  ];
+  return [base.concat(legsA), base.concat(legsB)];
+})();
+
+const CACTUS = [
+  '...##...',
+  '...##...',
+  '#..##...',
+  '#..##..#',
+  '#..##..#',
+  '#..##..#',
+  '#####..#',
+  '...##..#',
+  '...#####',
+  '...##...',
+  '...##...',
+  '...##...'
+];
+
+const runner = { raf: null, obstacles: [], frame: 0, t: 0, y: 0, vy: 0, nextSpawn: 0 };
+
+function drawBitmap(ctx, bitmap, x, y, px, style) {
+  ctx.fillStyle = style;
+  for (let r = 0; r < bitmap.length; r++) {
+    for (let c = 0; c < bitmap[r].length; c++) {
+      if (bitmap[r][c] === '#') ctx.fillRect(x + c * px, y + r * px, px + 0.4, px + 0.4);
+    }
+  }
+}
+
+function startRunner() {
+  const canvas = $('dino-strip');
+  canvas.hidden = false;
+  const dpr = window.devicePixelRatio || 1;
+  const W = Math.max(160, canvas.clientWidth || (canvas.parentElement.clientWidth - 28) || 0);
+  const H = 52;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const PX = 2;                       // pixel size
+  const DINO_W = 22 * PX, DINO_H = 22 * PX;
+  const CACT_H = CACTUS.length * PX, CACT_W = 8 * PX;
+  const groundY = H - 6;
+  const dinoX = 16;
+  const speed = 2.4;
+
+  Object.assign(runner, { obstacles: [], frame: 0, t: 0, y: 0, vy: 0, nextSpawn: 40 });
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    ctx.clearRect(0, 0, W, H);
+    drawBitmap(ctx, DINO_FRAMES[0], dinoX, groundY - DINO_H, PX, 'rgba(255,255,255,0.85)');
+    return;
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    for (let gx = -(runner.t * speed % 12); gx < W; gx += 12) {
+      ctx.fillRect(gx, groundY + 2, 6, 1);
+    }
+    runner.obstacles.forEach(o => {
+      drawBitmap(ctx, CACTUS, o.x, groundY - CACT_H, PX, 'rgba(255,255,255,0.4)');
+    });
+    const grounded = runner.y === 0;
+    const frame = grounded ? DINO_FRAMES[Math.floor(runner.t / 7) % 2] : DINO_FRAMES[0];
+    drawBitmap(ctx, frame, dinoX, groundY - DINO_H + runner.y, PX, 'rgba(255,255,255,0.85)');
+  }
+
+  function tick() {
+    runner.t++;
+
+    // spawn cacti
+    if (--runner.nextSpawn <= 0) {
+      runner.obstacles.push({ x: W + 10 });
+      runner.nextSpawn = 70 + Math.random() * 80;
+    }
+    runner.obstacles.forEach(o => { o.x -= speed; });
+    runner.obstacles = runner.obstacles.filter(o => o.x > -CACT_W - 4);
+
+    // jump when an obstacle approaches
+    const grounded = runner.y === 0;
+    const next = runner.obstacles.find(o => o.x + CACT_W > dinoX && o.x < dinoX + DINO_W + 34);
+    if (grounded && next && next.x - (dinoX + DINO_W) < 30) {
+      runner.vy = -6.4;
+    }
+    if (!grounded || runner.vy !== 0) {
+      runner.y += runner.vy;
+      runner.vy += 0.42;
+      if (runner.y >= 0) { runner.y = 0; runner.vy = 0; }
+    }
+
+    drawFrame();
+    runner.raf = requestAnimationFrame(tick);
+  }
+  cancelAnimationFrame(runner.raf);
+  drawFrame(); // first frame immediately, before the loop starts
+  runner.raf = requestAnimationFrame(tick);
+}
+
+function stopRunner() {
+  cancelAnimationFrame(runner.raf);
+  runner.raf = null;
+  $('dino-strip').hidden = true;
 }
 
 function syncHasText() {
@@ -153,17 +295,17 @@ async function ask(q) {
 
   streamingRaw = '';
   streamingEl = addMsg('assistant streaming', '');
-  window.selectask.ask(history.map(m => ({ ...m })));
+  window.rexplain.ask(history.map(m => ({ ...m })));
 }
 
-window.selectask.onChunk((delta) => {
+window.rexplain.onChunk((delta) => {
   if (!streamingEl) return;
   streamingRaw += delta;
   streamingEl.innerHTML = renderMarkdown(streamingRaw);
   thread.scrollTop = thread.scrollHeight;
 });
 
-window.selectask.onDone(() => {
+window.rexplain.onDone(() => {
   if (streamingEl) {
     streamingEl.classList.remove('streaming');
     history.push({ role: 'assistant', content: streamingRaw });
@@ -173,7 +315,7 @@ window.selectask.onDone(() => {
   questionEl.focus();
 });
 
-window.selectask.onError((msg) => {
+window.rexplain.onError((msg) => {
   if (streamingEl) { streamingEl.remove(); streamingEl = null; }
   history.pop(); // drop the failed user turn so retry is clean
   addMsg('error', escapeHtml(msg));
@@ -188,7 +330,7 @@ $('ask-form').addEventListener('submit', (e) => {
 questionEl.addEventListener('input', syncHasText);
 
 $('btn-stop').addEventListener('click', () => {
-  window.selectask.stop();
+  window.rexplain.stop();
   if (streamingEl) {
     streamingEl.classList.remove('streaming');
     if (streamingRaw) history.push({ role: 'assistant', content: streamingRaw });
@@ -200,7 +342,7 @@ $('btn-stop').addEventListener('click', () => {
 
 /* ---------- session ---------- */
 
-window.selectask.onSession(async (payload) => {
+window.rexplain.onSession(async (payload) => {
   if (payload.type === 'settings') { openSettingsView(); return; }
   selection = payload.selection || '';
   history = [];
@@ -210,7 +352,7 @@ window.selectask.onSession(async (payload) => {
   setView('ask');
 
   try {
-    const cfg = await window.selectask.getConfig();
+    const cfg = await window.rexplain.getConfig();
     const hasKey = cfg.provider === 'compatible' ? !!cfg.baseUrl : !!(cfg.apiKeys || {})[cfg.provider];
     if (!hasKey) {
       addMsg('hintline', 'Add your API key first — opening Settings.');
@@ -232,7 +374,7 @@ function syncProviderFields() {
 
 $('cfg-provider').addEventListener('change', async () => {
   try {
-    const cfg = await window.selectask.getConfig();
+    const cfg = await window.rexplain.getConfig();
     $('cfg-key').value = (cfg.apiKeys || {})[$('cfg-provider').value] || '';
   } catch { $('cfg-key').value = ''; }
   syncProviderFields();
@@ -241,7 +383,7 @@ $('cfg-provider').addEventListener('change', async () => {
 $('btn-save').addEventListener('click', async () => {
   const provider = $('cfg-provider').value;
   try {
-    await window.selectask.setConfig({
+    await window.rexplain.setConfig({
       provider,
       model: $('cfg-model').value.trim() || MODEL_PLACEHOLDERS[provider],
       baseUrl: $('cfg-baseurl').value.trim(),
@@ -263,10 +405,10 @@ $('btn-save').addEventListener('click', async () => {
 
 $('btn-back').addEventListener('click', () => setView('ask'));
 $('btn-settings').addEventListener('click', openSettingsView);
-$('btn-close').addEventListener('click', () => window.selectask.close());
+$('btn-close').addEventListener('click', () => window.rexplain.close());
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') window.selectask.close();
+  if (e.key === 'Escape') window.rexplain.close();
 });
 
 // External links open in the browser, never inside the popup.
@@ -274,6 +416,6 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="http"]');
   if (a) {
     e.preventDefault();
-    window.selectask.openExternal(a.href);
+    window.rexplain.openExternal(a.href);
   }
 });

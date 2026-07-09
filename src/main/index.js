@@ -103,13 +103,13 @@ function showPopupAt(point, payload) {
   popup.focus();
 }
 
-const DEBUG = !!process.env.SELECTASK_DEBUG;
+const DEBUG = !!(process.env.REXPLAIN_DEBUG || process.env.SELECTASK_DEBUG);
 
 async function triggerCapture(point) {
   try {
-    if (DEBUG) console.log('[selectask] trigger', point && point.reason);
+    if (DEBUG) console.log('[rexplain] trigger', point && point.reason);
     const text = await captureSelection();
-    if (DEBUG) console.log('[selectask] captured', text ? `${text.length} chars` : 'nothing');
+    if (DEBUG) console.log('[rexplain] captured', text ? `${text.length} chars` : 'nothing');
     if (!text) return;
     // Keyboard events carry no coordinates — fall back to the live cursor.
     const p = point && Number.isFinite(point.x) && Number.isFinite(point.y)
@@ -153,7 +153,7 @@ function createTray() {
   const iconName = process.platform === 'darwin' ? 'trayTemplate.png' : 'tray.png';
   const icon = nativeImage.createFromPath(path.join(__dirname, '..', '..', 'assets', iconName));
   tray = new Tray(icon);
-  tray.setToolTip('SelectAsk — select text, ask AI');
+  tray.setToolTip('Rexplain — select text, ask the dino');
   const rebuild = () => {
     tray.setContextMenu(Menu.buildFromTemplate([
       { label: 'Ask about current selection', click: captureAtCursor },
@@ -166,8 +166,8 @@ function createTray() {
       },
       { label: 'Settings…', click: openSettings },
       { type: 'separator' },
-      { label: 'GitHub', click: () => shell.openExternal('https://github.com/MoustafaTech/selectask') },
-      { label: 'Quit SelectAsk', click: () => { app.exit(0); } }
+      { label: 'GitHub', click: () => shell.openExternal('https://github.com/MoustafaTech/rexplain') },
+      { label: 'Quit Rexplain', click: () => { app.exit(0); } }
     ]));
   };
   rebuild();
