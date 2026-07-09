@@ -1,7 +1,7 @@
 {
   "name": "rexplain",
   "productName": "Rexplain",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Select text anywhere, tap Ctrl, and a little dino fetches you an AI answer \u2014 without losing your focus.",
   "main": "src/main/index.js",
   "author": "MoustafaTech <moustafaessam2212@gmail.com>",

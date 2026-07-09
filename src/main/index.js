@@ -52,12 +52,8 @@ function createPopup() {
     show: false,
     frame: false,
     transparent: true,
-    // Electron's native macOS corner mask is hard-coded at 9px; the CSS
-    // radius must match it exactly or the vibrancy material pokes out at
-    // the corners. Keep roundedCorners at its default (true).
-    ...(process.platform === 'darwin'
-      ? { vibrancy: 'hud', visualEffectState: 'active' }
-      : {}),
+    // The pixel theme is opaque — no vibrancy. transparent stays true so the
+    // 9px OS corner mask (matched by the shell's CSS radius) renders clean.
     resizable: false,
     minimizable: false,
     maximizable: false,
