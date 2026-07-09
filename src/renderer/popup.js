@@ -51,7 +51,7 @@ lightMq.addEventListener('change', () => { if (themeSetting === 'system') applyT
 
 async function openSettingsView() {
   try {
-    const cfg = await window.rexplain.getConfig();
+    const cfg = await window.rex.getConfig();
     $('cfg-theme').value = cfg.theme || 'system';
     $('cfg-provider').value = cfg.provider;
     $('cfg-key').value = (cfg.apiKeys || {})[cfg.provider] || '';
@@ -396,7 +396,7 @@ function initRunner() {
 
 window.addEventListener('resize', initRunner);
 initRunner();
-window.rexplain.getConfig().then(cfg => applyTheme(cfg.theme || 'system')).catch(() => applyTheme('system'));
+window.rex.getConfig().then(cfg => applyTheme(cfg.theme || 'system')).catch(() => applyTheme('system'));
 
 function syncHasText() {
   $('ask-form').classList.toggle('has-text', questionEl.value.trim().length > 0);
@@ -433,17 +433,17 @@ async function ask(q) {
   streamingEl = rex.el;
   streamingBody = rex.body;
   if (runner.y === 0) runner.vy = -4.4; // the dino jumps when you send
-  window.rexplain.ask(history.map(m => ({ ...m })));
+  window.rex.ask(history.map(m => ({ ...m })));
 }
 
-window.rexplain.onChunk((delta) => {
+window.rex.onChunk((delta) => {
   if (!streamingBody) return;
   streamingRaw += delta;
   streamingBody.innerHTML = renderMarkdown(streamingRaw);
   thread.scrollTop = thread.scrollHeight;
 });
 
-window.rexplain.onDone(() => {
+window.rex.onDone(() => {
   if (streamingEl) {
     streamingEl.classList.remove('streaming');
     history.push({ role: 'assistant', content: streamingRaw });
@@ -454,7 +454,7 @@ window.rexplain.onDone(() => {
   questionEl.focus();
 });
 
-window.rexplain.onError((msg) => {
+window.rex.onError((msg) => {
   if (streamingEl) { streamingEl.remove(); streamingEl = null; streamingBody = null; }
   history.pop(); // drop the failed user turn so retry is clean
   addMsg('error', escapeHtml(msg));
@@ -469,7 +469,7 @@ $('ask-form').addEventListener('submit', (e) => {
 questionEl.addEventListener('input', syncHasText);
 
 $('btn-stop').addEventListener('click', () => {
-  window.rexplain.stop();
+  window.rex.stop();
   if (streamingEl) {
     streamingEl.classList.remove('streaming');
     if (streamingRaw) history.push({ role: 'assistant', content: streamingRaw });
@@ -490,7 +490,7 @@ document.addEventListener('keydown', (e) => {
 
 /* ---------- session ---------- */
 
-window.rexplain.onSession(async (payload) => {
+window.rex.onSession(async (payload) => {
   if (payload.type === 'settings') { openSettingsView(); return; }
   const sel = payload.selection || '';
   const appending = payload.append && (history.length > 0 || pendingSelections.length > 0);
@@ -510,7 +510,7 @@ window.rexplain.onSession(async (payload) => {
   setView('ask');
 
   try {
-    const cfg = await window.rexplain.getConfig();
+    const cfg = await window.rex.getConfig();
     const hasKey = cfg.provider === 'compatible' ? !!cfg.baseUrl : !!(cfg.apiKeys || {})[cfg.provider];
     if (!hasKey) {
       addMsg('hintline', 'Add your API key first — opening Settings.');
@@ -532,7 +532,7 @@ function syncProviderFields() {
 
 $('cfg-provider').addEventListener('change', async () => {
   try {
-    const cfg = await window.rexplain.getConfig();
+    const cfg = await window.rex.getConfig();
     $('cfg-key').value = (cfg.apiKeys || {})[$('cfg-provider').value] || '';
   } catch { $('cfg-key').value = ''; }
   syncProviderFields();
@@ -541,7 +541,7 @@ $('cfg-provider').addEventListener('change', async () => {
 $('btn-save').addEventListener('click', async () => {
   const provider = $('cfg-provider').value;
   try {
-    await window.rexplain.setConfig({
+    await window.rex.setConfig({
       theme: $('cfg-theme').value,
       provider,
       model: $('cfg-model').value.trim() || MODEL_PLACEHOLDERS[provider],
@@ -559,10 +559,10 @@ $('btn-save').addEventListener('click', async () => {
 
 $('btn-back-top').addEventListener('click', () => setView('ask'));
 $('btn-settings').addEventListener('click', openSettingsView);
-$('btn-close').addEventListener('click', () => window.rexplain.close());
+$('btn-close').addEventListener('click', () => window.rex.close());
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') window.rexplain.close();
+  if (e.key === 'Escape') window.rex.close();
 });
 
 // External links open in the browser, never inside the popup.
@@ -570,6 +570,6 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="http"]');
   if (a) {
     e.preventDefault();
-    window.rexplain.openExternal(a.href);
+    window.rex.openExternal(a.href);
   }
 });

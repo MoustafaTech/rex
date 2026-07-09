@@ -4,7 +4,7 @@
 // exercised in a plain browser (npx http-server src/renderer). In Electron the
 // real bridge exists before this runs, so this file is a no-op there.
 (function () {
-  if (window.rexplain) return;
+  if (window.rex) return;
 
   const listeners = { session: [], chunk: [], done: [], error: [] };
   const emit = (ch, ...args) => listeners[ch].forEach(fn => fn(...args));
@@ -19,7 +19,7 @@
     closeOnBlur: true
   };
 
-  window.rexplain = {
+  window.rex = {
     getConfig: async () => JSON.parse(JSON.stringify(cfg)),
     setConfig: async (patch) => { Object.assign(cfg, patch); return true; },
     ask: async () => {

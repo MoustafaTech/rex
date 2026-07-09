@@ -2,7 +2,7 @@
 
 // Generates all app icons as PNGs with zero image dependencies.
 // Design: three lines of "text" with the middle line selected (highlight band)
-// — the SelectAsk gesture, as an icon.
+// — the Rex gesture, as an icon.
 
 const fs = require('fs');
 const path = require('path');
@@ -211,13 +211,13 @@ if (require.main === module) {
 
   fs.writeFileSync(path.join(assets, 'logo.svg'),
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Rexplain mark: pixel T-Rex -->
+  <!-- Rex mark: pixel T-Rex -->
 ${bitmapSvgRects(DINO, 64, '#ffffff')}
 </svg>
 `);
   fs.writeFileSync(path.join(assets, 'logo-badge.svg'),
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- Rexplain badge: pixel T-Rex on its app tile, for light backgrounds -->
+  <!-- Rex badge: pixel T-Rex on its app tile, for light backgrounds -->
   <rect x="2" y="2" width="60" height="60" rx="14" fill="#131316"/>
   <g transform="translate(11.5,11.5) scale(0.64)">
 ${bitmapSvgRects(DINO, 64, '#ffffff')}
