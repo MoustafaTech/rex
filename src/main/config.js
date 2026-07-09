@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DEFAULTS = {
+  theme: 'system',       // system | dark | light
   provider: 'anthropic', // anthropic | openai | google | compatible
   apiKeys: {},           // { anthropic: '...', openai: '...', google: '...', compatible: '...' }
   model: 'claude-sonnet-5',

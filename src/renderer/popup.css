@@ -35,6 +35,28 @@
 
 }
 
+body.light {
+  --bg:        #f7f7f7;
+  --surface:   #efefef;
+  --raised:    #e6e6e6;
+  --ink-dim:   #dcdcdc;
+  --disabled:  #b4b4b4;
+  --border:    #8a8a8a;
+  --scene-far: #dadada;
+  --scene-mid: #b8b8b8;
+  --scene-ink: #535353;
+  --text-2:    #5f5f5f;
+  --text-1:    #1c1c1c;
+  --hot:       #000000;
+}
+body.light #thread::-webkit-scrollbar-track {
+  background: var(--surface) url("data:image/svg+xml;charset=utf-8,%3Csvg width='2' height='2' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='%23e0e0e0'/%3E%3Crect x='1' y='1' width='1' height='1' fill='%23e0e0e0'/%3E%3C/svg%3E");
+}
+body.light .msg.error { background: var(--text-1); color: var(--bg); border-color: var(--text-1); }
+body.light #question:focus, body.light #question:focus-visible { box-shadow: none; }
+body.light button:focus-visible, body.light select:focus-visible,
+body.light .field input:focus-visible { box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.2); }
+
 * {
   margin: 0;
   padding: 0;
@@ -128,27 +150,18 @@ img, canvas, svg { image-rendering: pixelated; }
   height: 2px;
   background: transparent;
 }
-/* gear: 8x8 pixel cog */
+.icon-btn::before { top: 5px; left: 5px; }
+/* settings: three slider rails with knobs */
 #btn-settings::before {
-  box-shadow:
-    4px 0 currentColor, 6px 0 currentColor,
-    0 2px currentColor, 2px 2px currentColor, 4px 2px currentColor, 6px 2px currentColor, 8px 2px currentColor, 10px 2px currentColor,
-    2px 4px currentColor, 8px 4px currentColor,
-    0 6px currentColor, 2px 6px currentColor, 8px 6px currentColor, 10px 6px currentColor,
-    2px 8px currentColor, 8px 8px currentColor,
-    0 10px currentColor, 2px 10px currentColor, 4px 10px currentColor, 6px 10px currentColor, 8px 10px currentColor, 10px 10px currentColor,
-    4px 12px currentColor, 6px 12px currentColor;
+  box-shadow: 0px 0px currentColor, 2px 0px currentColor, 4px 0px currentColor, 6px 0px currentColor, 8px 0px currentColor, 10px 0px currentColor, 12px 0px currentColor, 2px 2px currentColor, 0px 6px currentColor, 2px 6px currentColor, 4px 6px currentColor, 6px 6px currentColor, 8px 6px currentColor, 10px 6px currentColor, 12px 6px currentColor, 8px 8px currentColor, 0px 12px currentColor, 2px 12px currentColor, 4px 12px currentColor, 6px 12px currentColor, 8px 12px currentColor, 10px 12px currentColor, 12px 12px currentColor, 4px 14px currentColor;
 }
-/* close: 5-step diagonal cross */
+/* close: clean pixel X */
 #btn-close::before {
-  box-shadow:
-    0 0 currentColor, 8px 0 currentColor,
-    2px 2px currentColor, 6px 2px currentColor,
-    4px 4px currentColor,
-    2px 6px currentColor, 6px 6px currentColor,
-    0 8px currentColor, 8px 8px currentColor;
-  top: 8px;
-  left: 8px;
+  box-shadow: 0px 0px currentColor, 12px 0px currentColor, 0px 2px currentColor, 2px 2px currentColor, 10px 2px currentColor, 12px 2px currentColor, 2px 4px currentColor, 4px 4px currentColor, 8px 4px currentColor, 10px 4px currentColor, 4px 6px currentColor, 6px 6px currentColor, 8px 6px currentColor, 2px 8px currentColor, 4px 8px currentColor, 8px 8px currentColor, 10px 8px currentColor, 0px 10px currentColor, 2px 10px currentColor, 10px 10px currentColor, 12px 10px currentColor, 0px 12px currentColor, 12px 12px currentColor;
+}
+/* back: pixel left arrow, shown while in settings */
+#btn-back-top::before {
+  box-shadow: 6px 0px currentColor, 4px 2px currentColor, 6px 2px currentColor, 2px 4px currentColor, 4px 4px currentColor, 6px 4px currentColor, 8px 4px currentColor, 10px 4px currentColor, 12px 4px currentColor, 0px 6px currentColor, 2px 6px currentColor, 4px 6px currentColor, 6px 6px currentColor, 8px 6px currentColor, 10px 6px currentColor, 12px 6px currentColor, 2px 8px currentColor, 4px 8px currentColor, 6px 8px currentColor, 8px 8px currentColor, 10px 8px currentColor, 12px 8px currentColor, 4px 10px currentColor, 6px 10px currentColor, 6px 12px currentColor;
 }
 
 /* ---------- views ---------- */
@@ -477,7 +490,9 @@ kbd {
 .settings-note { font-size: 16px; color: var(--text-2); }
 .settings-note a { color: var(--text-1); text-decoration: underline; }
 
-button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+button:focus-visible, select:focus-visible, a:focus-visible,
+.field input:focus-visible {
   outline: none;
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
 }
+#question:focus, #question:focus-visible { outline: none; box-shadow: none; }

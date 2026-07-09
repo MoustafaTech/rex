@@ -31,12 +31,28 @@ function setView(name) {
   const showSettingsView = name === 'settings';
   viewAsk.hidden = showSettingsView;
   viewSettings.hidden = !showSettingsView;
+  $('btn-back-top').hidden = !showSettingsView;
+  $('btn-settings').hidden = showSettingsView;
   if (!showSettingsView) questionEl.focus();
 }
+
+/* ---------- theme (day / night run) ---------- */
+
+let themeSetting = 'system';
+const lightMq = matchMedia('(prefers-color-scheme: light)');
+
+function applyTheme(setting) {
+  themeSetting = setting || 'system';
+  const light = themeSetting === 'light' || (themeSetting === 'system' && lightMq.matches);
+  document.body.classList.toggle('light', light);
+  if (typeof initRunner === 'function' && $('dino-strip')) initRunner();
+}
+lightMq.addEventListener('change', () => { if (themeSetting === 'system') applyTheme('system'); });
 
 async function openSettingsView() {
   try {
     const cfg = await window.rexplain.getConfig();
+    $('cfg-theme').value = cfg.theme || 'system';
     $('cfg-provider').value = cfg.provider;
     $('cfg-key').value = (cfg.apiKeys || {})[cfg.provider] || '';
     $('cfg-model').value = cfg.model || '';
@@ -279,17 +295,23 @@ function initRunner() {
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Chrome night palette, inverted: ink #ACACAC, far #252525, mid #454545
-  const INK = '#acacac', FAR = '#252525', MID = '#454545', HOT = '#ffffff';
+  const css = getComputedStyle(document.body);
+  const INK = css.getPropertyValue('--scene-ink').trim();
+  const FAR = css.getPropertyValue('--scene-far').trim();
+  const MID = css.getPropertyValue('--scene-mid').trim();
+  const HOT = css.getPropertyValue('--hot').trim();
+  const isDay = document.body.classList.contains('light');
 
   function drawFrame() {
     ctx.clearRect(0, 0, W, H);
 
-    // night sky
-    runner.stars.forEach(s => {
-      const on = ((runner.t + s.tw) % 240) < 200;
-      if (on) { ctx.fillStyle = MID; ctx.fillRect(Math.round(s.x), Math.round(s.y), 2, 2); }
-    });
+    // stars only come out at night
+    if (!isDay) {
+      runner.stars.forEach(s => {
+        const on = ((runner.t + s.tw) % 240) < 200;
+        if (on) { ctx.fillStyle = MID; ctx.fillRect(Math.round(s.x), Math.round(s.y), 2, 2); }
+      });
+    }
     runner.clouds.forEach(c => drawBitmap(ctx, CLOUD, Math.round(c.x), c.y, 2, FAR));
 
     // ground: solid line + drifting pebbles beneath
@@ -374,6 +396,7 @@ function initRunner() {
 
 window.addEventListener('resize', initRunner);
 initRunner();
+window.rexplain.getConfig().then(cfg => applyTheme(cfg.theme || 'system')).catch(() => applyTheme('system'));
 
 function syncHasText() {
   $('ask-form').classList.toggle('has-text', questionEl.value.trim().length > 0);
@@ -519,11 +542,13 @@ $('btn-save').addEventListener('click', async () => {
   const provider = $('cfg-provider').value;
   try {
     await window.rexplain.setConfig({
+      theme: $('cfg-theme').value,
       provider,
       model: $('cfg-model').value.trim() || MODEL_PLACEHOLDERS[provider],
       baseUrl: $('cfg-baseurl').value.trim(),
       apiKeys: { [provider]: $('cfg-key').value }
     });
+    applyTheme($('cfg-theme').value);
   } catch (err) {
     setView('ask');
     addMsg('error', 'Could not save settings: ' + escapeHtml(String(err.message || err)));
@@ -532,7 +557,7 @@ $('btn-save').addEventListener('click', async () => {
   setView('ask');
 });
 
-$('btn-back').addEventListener('click', () => setView('ask'));
+$('btn-back-top').addEventListener('click', () => setView('ask'));
 $('btn-settings').addEventListener('click', openSettingsView);
 $('btn-close').addEventListener('click', () => window.rexplain.close());
 
