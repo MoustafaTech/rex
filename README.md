@@ -1,10 +1,14 @@
 <p align="center"><img src="assets/logo-badge.svg" width="80" alt="Rex logo" /></p>
 <h1 align="center">Rex 🦖</h1>
-<p align="center"><b>Select text anywhere. Tap <code>Ctrl</code>. Ask.</b></p>
+<p align="center"><b>The quick answer, without losing your thread.</b></p>
 
-<p align="center"><img src="assets/demo.gif" width="760" alt="Select text, tap Ctrl, ask Rex, get an answer" /></p>
+<p align="center"><img src="assets/demo.gif" width="760" alt="Deep in a long AI chat, a code line gets selected and Rex explains it in place" /></p>
 
-Rex is a tiny open-source desktop app. Select text in **any** app, tap `Ctrl`, and ask AI about it — the answer streams into a small pixel popup while a dinosaur runs across the top. Your own API key, straight to your provider. No server, no account, no telemetry.
+You're deep in a long AI chat, a dense article, or someone else's code — and one line stops you. A snippet you don't recognize, a term, an error. Opening another chat means losing your place, re-explaining context, and twenty minutes of drift for a ten-second question.
+
+**Rex is the ten-second path**: select the thing, tap `Ctrl`, ask. A small popup answers right where you are — short and to the point — and your main chat, your article, your flow stay exactly where you left them. It's especially good at quick snippets: highlight one line of code out of a wall of output and ask *"what does this do?"* without pasting anything anywhere.
+
+Open source, your own API key, straight to your provider. No server, no account, no telemetry — just a dinosaur that fetches answers.
 
 ## Install
 
