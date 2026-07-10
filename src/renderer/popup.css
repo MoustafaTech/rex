@@ -305,6 +305,13 @@ main {
   color: var(--bg);
   padding: 0 var(--px);
 }
+/* code nested in emphasis: let the inverse block carry it, or the two
+   backgrounds fight and the text vanishes */
+.msg strong code, .msg code strong {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
 .msg.error strong { background: var(--bg); color: var(--text-1); }
 .msg em { font-style: normal; color: var(--text-2); }
 .msg code {
