@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('rex', {
   close: () => ipcRenderer.send('close-popup'),
   openExternal: (url) => ipcRenderer.send('open-external', url),
   onSession: (fn) => ipcRenderer.on('session', (_e, payload) => fn(payload)),
+  onNativeTheme: (fn) => ipcRenderer.on('native-theme', (_e, dark) => fn(dark)),
   onChunk: (fn) => ipcRenderer.on('chunk', (_e, delta) => fn(delta)),
   onDone: (fn) => ipcRenderer.on('done', () => fn()),
   onError: (fn) => ipcRenderer.on('stream-error', (_e, msg) => fn(msg))

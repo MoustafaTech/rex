@@ -54,14 +54,26 @@ function setView(name) {
 
 let themeSetting = 'system';
 const lightMq = matchMedia('(prefers-color-scheme: light)');
+let systemLight = lightMq.matches;
 
 function applyTheme(setting) {
   themeSetting = setting || 'system';
-  const light = themeSetting === 'light' || (themeSetting === 'system' && lightMq.matches);
+  const light = themeSetting === 'light' || (themeSetting === 'system' && systemLight);
   document.body.classList.toggle('light', light);
   if (typeof initRunner === 'function' && $('dino-strip')) initRunner();
 }
-lightMq.addEventListener('change', () => { if (themeSetting === 'system') applyTheme('system'); });
+// Two live signals for "System default": the renderer's media query and the
+// main process's nativeTheme push (which fires even if this one is throttled).
+lightMq.addEventListener('change', (e) => {
+  systemLight = e.matches;
+  if (themeSetting === 'system') applyTheme('system');
+});
+if (window.rex.onNativeTheme) {
+  window.rex.onNativeTheme((dark) => {
+    systemLight = !dark;
+    if (themeSetting === 'system') applyTheme('system');
+  });
+}
 
 async function openSettingsView() {
   try {

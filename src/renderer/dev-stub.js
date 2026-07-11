@@ -6,7 +6,7 @@
 (function () {
   if (window.rex) return;
 
-  const listeners = { session: [], chunk: [], done: [], error: [] };
+  const listeners = { session: [], chunk: [], done: [], error: [], theme: [] };
   const emit = (ch, ...args) => listeners[ch].forEach(fn => fn(...args));
   let streaming = null;
 
@@ -36,6 +36,7 @@
     close: () => console.log('[stub] close popup'),
     openExternal: (url) => window.open(url, '_blank'),
     onSession: (fn) => listeners.session.push(fn),
+    onNativeTheme: (fn) => listeners.theme.push(fn),
     onChunk: (fn) => listeners.chunk.push(fn),
     onDone: (fn) => listeners.done.push(fn),
     onError: (fn) => listeners.error.push(fn)

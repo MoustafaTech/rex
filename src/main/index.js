@@ -2,7 +2,7 @@
 
 const {
   app, BrowserWindow, Tray, Menu, ipcMain, screen,
-  nativeImage, shell, systemPreferences, session
+  nativeImage, shell, systemPreferences, session, nativeTheme
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
@@ -108,6 +108,16 @@ function createPopup() {
   });
   popup.loadFile(path.join(__dirname, '..', 'renderer', 'popup.html'));
   popup.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
+  // Follow the OS appearance live: the main process always hears the switch,
+  // even when the renderer's own media-query listener is throttled.
+  const sendTheme = () => {
+    if (popup && !popup.isDestroyed()) {
+      popup.webContents.send('native-theme', nativeTheme.shouldUseDarkColors);
+    }
+  };
+  nativeTheme.on('updated', sendTheme);
+  popup.webContents.on('did-finish-load', sendTheme);
 
   // The window has the preload bridge (and the user's questions); never let
   // remote content load inside it. Links open in the system browser.
