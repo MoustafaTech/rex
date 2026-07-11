@@ -229,8 +229,16 @@ main {
   color: var(--text-2);
   font-size: 12.5px;
   padding: 4px 8px;
-  max-height: 66px;
-  overflow: hidden;
+  /* long selections stay compact but fully readable: scroll inside the chip */
+  max-height: 96px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.msg.selchip::-webkit-scrollbar { width: 8px; }
+.msg.selchip::-webkit-scrollbar-track { background: var(--raised); }
+.msg.selchip::-webkit-scrollbar-thumb {
+  background: var(--disabled);
+  border: 2px solid var(--raised);
 }
 .msg.selchip::before {
   content: "SELECTED";

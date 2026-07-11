@@ -430,7 +430,9 @@ function syncHasText() {
 // Show a captured selection in the thread as a context chip.
 let lastChipEl = null;
 function chipText(text) {
-  return text.length > 220 ? text.slice(0, 220) + '…' : text;
+  // the chip scrolls, so show plenty — but keep a cap so a select-all of a
+  // huge page doesn't bloat the DOM (the full text is still sent to the model)
+  return text.length > 1500 ? text.slice(0, 1500) + '…' : text;
 }
 function addSelectionChip(text) {
   const el = document.createElement('div');
