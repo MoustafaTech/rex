@@ -5,6 +5,8 @@ const {
   nativeImage, shell, systemPreferences, session
 } = require('electron');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 const config = require('./config');
 const { captureSelection } = require('./selection');
@@ -26,10 +28,39 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(onReady);
 }
 
+// Rex is only useful while it's running: register as a login item so the
+// triggers work after a reboot without opening anything. Dev runs are
+// excluded — nobody wants a stray `electron .` starting at login.
+function syncLoginItem(enable) {
+  if (!app.isPackaged) return;
+  try {
+    if (process.platform === 'linux') {
+      // Electron has no login-item API on Linux; use XDG autostart.
+      const dir = path.join(os.homedir(), '.config', 'autostart');
+      const entry = path.join(dir, 'rex.desktop');
+      if (enable) {
+        const target = process.env.APPIMAGE || process.execPath;
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(entry,
+          '[Desktop Entry]\nType=Application\nName=Rex\n' +
+          `Exec=${target}\nTerminal=false\nX-GNOME-Autostart-enabled=true\n`);
+      } else {
+        fs.rmSync(entry, { force: true });
+      }
+    } else {
+      app.setLoginItemSettings({ openAtLogin: enable });
+    }
+  } catch (err) {
+    console.error('could not update login item', err);
+  }
+}
+
 function onReady() {
   // The popup renders only local files; nothing should ever ask for camera,
   // notifications, etc. Deny all permission requests outright.
   session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => callback(false));
+
+  syncLoginItem(config.load().launchAtLogin !== false);
 
   if (process.platform === 'darwin') {
     app.dock.hide();
@@ -203,6 +234,15 @@ function createTray() {
         type: 'checkbox',
         checked: triggersPaused,
         click: (item) => { triggersPaused = item.checked; }
+      },
+      {
+        label: 'Start at login',
+        type: 'checkbox',
+        checked: config.load().launchAtLogin !== false,
+        click: (item) => {
+          config.save({ launchAtLogin: item.checked });
+          syncLoginItem(item.checked);
+        }
       },
       { label: 'Settings…', click: openSettings },
       { type: 'separator' },

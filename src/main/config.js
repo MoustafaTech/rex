@@ -22,6 +22,7 @@ const DEFAULTS = {
     tapCtrl: true,       // select text, then tap Ctrl on its own
     doubleTapCtrl: true  // tap Ctrl twice to open Rex with no selection
   },
+  launchAtLogin: true,   // keep Rex in the tray so triggers always work
   maxTokens: 1024
 };
 

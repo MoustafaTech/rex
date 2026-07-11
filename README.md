@@ -93,6 +93,8 @@ The base URL field only appears for the OpenAI-compatible option (e.g. `http://l
 
 **Fully keyboard-drivable**: `Esc` backs out of settings, then closes · `Ctrl/⌘` + `,` opens settings · `Tab` moves around · `Enter` saves · `/` jumps to the ask box. The full list lives in Settings.
 
+**Always on**: Rex starts at login and lives in the tray, so the triggers work without opening anything (toggle "Start at login" in the tray menu).
+
 **Extras**: light/dark theme follows your system (or pick in Settings — light is the dino's day run ☀️, dark is the night run 🌙) · the dino sprints while answers stream · `Space` makes him jump · your high score persists.
 
 ## Run from source

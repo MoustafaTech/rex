@@ -207,14 +207,27 @@ main {
   border: 2px solid var(--surface);
 }
 
-.msg { flex-shrink: 0; word-break: break-word; }
+/* Message content is meant to be read, not decoded: real text rendering.
+   The pixel font stays on labels and chrome (REX, SELECTED, buttons). */
+.msg {
+  flex-shrink: 0;
+  word-break: break-word;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, Cantarell, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+/* the global reset turns smoothing off everywhere; message text turns it back on */
+.msg, .msg * {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
 .msg.selchip {
   align-self: stretch;
   border-left: 4px solid var(--disabled);
   background: var(--raised);
   color: var(--text-2);
-  font-size: 16px;
+  font-size: 12.5px;
   padding: 4px 8px;
   max-height: 66px;
   overflow: hidden;
@@ -273,7 +286,7 @@ main {
   color: var(--bg);
   border-color: var(--text-1);
   padding: 8px 10px;
-  font-size: 16px;
+  font-size: 13px;
 }
 .msg.error::before {
   content: "GAME OVER";
@@ -283,10 +296,10 @@ main {
   line-height: 1.5;
   margin-bottom: 4px;
 }
-.hintline { color: var(--text-2); font-size: 16px; text-align: center; margin-top: 12px; }
+.hintline { color: var(--text-2); font-size: 13px; text-align: center; margin-top: 12px; }
 
 /* markdown */
-.msg h1, .msg h2, .msg h3 { font-size: 18px; margin: 8px 0 4px; text-transform: uppercase; }
+.msg h1, .msg h2, .msg h3 { font-size: 14px; font-weight: 600; margin: 8px 0 4px; text-transform: uppercase; }
 .msg p { margin: 4px 0; }
 .msg ul, .msg ol { margin: 4px 0 4px 20px; }
 .msg li { margin: 2px 0; }
@@ -311,8 +324,8 @@ main {
 }
 .msg em { font-style: normal; color: var(--text-2); }
 .msg code {
-  font-family: var(--font-body);
-  font-size: 16px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
   background: var(--raised);
   padding: 0 4px;
 }
