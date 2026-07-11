@@ -2,13 +2,13 @@
 <h1 align="center">Rex — select text, tap Ctrl, ask</h1>
 <p align="center"><b>The quick answer, without losing your thread.</b></p>
 
-<p align="center"><img src="assets/demo.gif" width="760" alt="A code line gets selected in a long AI chat and Rex explains it in place" /></p>
+<p align="center"><img src="assets/rex-demo.gif" width="760" alt="A code line gets selected in a long AI chat and Rex explains it in place" /></p>
 
-You're deep in a long AI chat, a dense article, or someone else's code — and one line stops you. Opening a new chat means losing your place for a ten-second question.
+You're deep in a long AI chat, a dense article, or someone else's code — and one line stops you. Opening a new chat means losing your focus.
 
-**Rex is the ten-second path**: select the thing, tap `Ctrl`, ask. A small popup answers right where you are — short and to the point — and your flow stays put. Especially good at code snippets: highlight one line out of a wall of output and ask *"what does this do?"*
+**Rex is the ten-second path**: select the thing, tap `Ctrl`, ask — the answer lands right where you are.
 
-Open source, your own API key, straight to your provider. No server, no account, no telemetry — just a dinosaur that fetches answers.
+Open source, your own API key, straight to your provider. No server, no account.
 
 ## Install
 

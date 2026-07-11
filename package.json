@@ -32,7 +32,7 @@
     "files": [
       "src/**/*",
       "assets/**/*",
-      "!assets/demo.gif",
+      "!assets/rex-demo.gif",
       "!assets/logo.svg",
       "!assets/logo-badge.svg",
       "package.json"
