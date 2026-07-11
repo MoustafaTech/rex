@@ -144,13 +144,12 @@ img, canvas, svg { image-rendering: pixelated; }
 .icon-btn::before {
   content: "";
   position: absolute;
-  top: 7px;
-  left: 7px;
+  top: 5px;
+  left: 5px;
   width: 2px;
   height: 2px;
   background: transparent;
 }
-.icon-btn::before { top: 5px; left: 5px; }
 /* settings: three slider rails with knobs */
 #btn-settings::before {
   box-shadow: 0px 0px currentColor, 2px 0px currentColor, 4px 0px currentColor, 6px 0px currentColor, 8px 0px currentColor, 10px 0px currentColor, 12px 0px currentColor, 2px 2px currentColor, 0px 6px currentColor, 2px 6px currentColor, 4px 6px currentColor, 6px 6px currentColor, 8px 6px currentColor, 10px 6px currentColor, 12px 6px currentColor, 8px 8px currentColor, 0px 12px currentColor, 2px 12px currentColor, 4px 12px currentColor, 6px 12px currentColor, 8px 12px currentColor, 10px 12px currentColor, 12px 12px currentColor, 4px 14px currentColor;
@@ -284,8 +283,6 @@ main {
   line-height: 1.5;
   margin-bottom: 4px;
 }
-.msg.error a { color: inherit; }
-
 .hintline { color: var(--text-2); font-size: 16px; text-align: center; margin-top: 12px; }
 
 /* markdown */
@@ -312,7 +309,6 @@ main {
   color: inherit;
   padding: 0;
 }
-.msg.error strong { background: var(--bg); color: var(--text-1); }
 .msg em { font-style: normal; color: var(--text-2); }
 .msg code {
   font-family: var(--font-body);
@@ -378,7 +374,6 @@ main {
   box-shadow: inset -2px -2px var(--ink-dim), inset 2px 2px var(--disabled);
 }
 #ask-form.has-text #btn-send:active { box-shadow: inset 2px 2px var(--ink-dim), inset -2px -2px var(--disabled); }
-#btn-send { opacity: 1; transform: none; pointer-events: auto; }
 /* send: pixel right-arrow */
 #btn-send::before {
   content: "";
@@ -454,18 +449,6 @@ main {
 .field input:focus, .field select:focus {
   border-color: var(--text-1);
 }
-
-.check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  color: var(--text-1);
-  text-transform: none;
-  cursor: pointer;
-  min-height: 24px;
-}
-.check input { accent-color: var(--text-1); width: 16px; height: 16px; }
 
 kbd {
   font-family: var(--font-pixel);

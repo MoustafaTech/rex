@@ -47,9 +47,15 @@
         <span>Provider</span>
         <select id="cfg-provider">
           <option value="anthropic">Anthropic (Claude)</option>
-          <option value="openai">OpenAI</option>
+          <option value="openai">OpenAI (GPT)</option>
           <option value="google">Google (Gemini)</option>
-          <option value="compatible">OpenAI-compatible (Ollama, Groq, OpenRouter…)</option>
+          <option value="mistral">Mistral</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="xai">xAI (Grok)</option>
+          <option value="groq">Groq</option>
+          <option value="openrouter">OpenRouter</option>
+          <option value="ollama">Ollama (local)</option>
+          <option value="compatible">OpenAI-compatible (custom URL)</option>
         </select>
       </label>
       <label class="field">
@@ -68,7 +74,7 @@
         <button id="btn-save" class="primary">Save</button>
       </div>
       <p class="settings-note">Trigger: select text, then tap <kbd>Ctrl</kbd>. Select more text while Rex is open to add it to the conversation.</p>
-      <p class="settings-note">Open source — <a href="https://github.com/MoustafaTech/rex" id="link-repo">github.com/MoustafaTech/rex</a></p>
+      <p class="settings-note">Open source — <a href="https://github.com/MoustafaTech/rex">github.com/MoustafaTech/rex</a></p>
     </main>
   </div>
   <script src="dev-stub.js"></script>

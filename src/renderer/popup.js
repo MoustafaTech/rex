@@ -7,8 +7,6 @@ const viewSettings = $('view-settings');
 const thread = $('thread');
 const questionEl = $('question');
 
-if (navigator.platform.toLowerCase().includes('mac')) document.body.classList.add('mac');
-
 let pendingSelections = [];  // selections not yet sent with a question
 let history = [];            // [{role, content}] excluding system
 let streamingEl = null;
@@ -20,8 +18,17 @@ const MODEL_PLACEHOLDERS = {
   anthropic: 'claude-sonnet-5',
   openai: 'gpt-5.2',
   google: 'gemini-2.5-flash',
+  mistral: 'mistral-small-latest',
+  deepseek: 'deepseek-chat',
+  xai: 'grok-4',
+  groq: 'llama-3.3-70b-versatile',
+  openrouter: 'anthropic/claude-sonnet-5',
+  ollama: 'llama3.3',
   compatible: 'llama3.3'
 };
+
+// Providers that work without an API key (local or user-supplied endpoints).
+const KEY_OPTIONAL = new Set(['ollama', 'compatible']);
 
 /* ---------- view switching ----------
    One entry point, sets both views every time, and never leaves the popup
@@ -166,7 +173,6 @@ function setBusy(v) {
   busy = v;
   $('btn-send').hidden = v;
   $('btn-stop').hidden = !v;
-  $('ask-form').classList.toggle('busy', v);
   runner.turbo = v; // the dino sprints while an answer streams
 }
 
@@ -525,12 +531,16 @@ window.rex.onSession(async (payload) => {
         addSelectionChip(sel);
       }
     }
+    // A Ctrl tap pins the chip: later live selections stack a new one
+    // instead of rewriting it.
+    if (!payload.live) lastChipEl = null;
   }
   if (!payload.live) setView('ask');
 
   try {
     const cfg = await window.rex.getConfig();
-    const hasKey = cfg.provider === 'compatible' ? !!cfg.baseUrl : !!(cfg.apiKeys || {})[cfg.provider];
+    const hasKey = cfg.provider === 'compatible' ? !!cfg.baseUrl
+      : KEY_OPTIONAL.has(cfg.provider) || !!(cfg.apiKeys || {})[cfg.provider];
     if (!hasKey) {
       addMsg('hintline', 'Add your API key first — opening Settings.');
       openSettingsView();
@@ -544,8 +554,8 @@ function syncProviderFields() {
   const p = $('cfg-provider').value;
   $('field-baseurl').hidden = p !== 'compatible';
   $('cfg-model').placeholder = MODEL_PLACEHOLDERS[p] || '';
-  $('key-hint').textContent = p === 'compatible'
-    ? 'optional for local servers like Ollama'
+  $('key-hint').textContent = KEY_OPTIONAL.has(p)
+    ? 'optional for local servers'
     : 'stored only on this device';
 }
 
@@ -592,3 +602,7 @@ document.addEventListener('click', (e) => {
     window.rex.openExternal(a.href);
   }
 });
+
+// Dropping a file or URL onto the popup must never navigate it.
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('drop', (e) => e.preventDefault());

@@ -2,7 +2,7 @@
 
 const {
   app, BrowserWindow, Tray, Menu, ipcMain, screen,
-  nativeImage, shell, systemPreferences
+  nativeImage, shell, systemPreferences, session
 } = require('electron');
 const path = require('path');
 
@@ -27,6 +27,10 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 function onReady() {
+  // The popup renders only local files; nothing should ever ask for camera,
+  // notifications, etc. Deny all permission requests outright.
+  session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => callback(false));
+
   if (process.platform === 'darwin') {
     app.dock.hide();
     // Prompts the user to grant Accessibility access (needed to watch for the
@@ -73,6 +77,16 @@ function createPopup() {
   popup.loadFile(path.join(__dirname, '..', 'renderer', 'popup.html'));
   popup.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
+  // The window has the preload bridge (and the user's questions); never let
+  // remote content load inside it. Links open in the system browser.
+  popup.webContents.setWindowOpenHandler(({ url }) => {
+    if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    return { action: 'deny' };
+  });
+  popup.webContents.on('will-navigate', (e, url) => {
+    if (url !== popup.webContents.getURL()) e.preventDefault();
+  });
+
   popup.on('close', (e) => {
     e.preventDefault();
     hidePopup();
@@ -96,7 +110,7 @@ function showPopupAt(point, payload) {
   popup.focus();
 }
 
-const DEBUG = !!(process.env.REX_DEBUG || process.env.REXPLAIN_DEBUG || process.env.SELECTASK_DEBUG);
+const DEBUG = !!process.env.REX_DEBUG;
 
 async function triggerCapture(point) {
   try {
@@ -214,7 +228,7 @@ ipcMain.handle('ask', async (e, messages) => {
   try {
     await streamChat(
       cfg,
-      messages,
+      cfg.systemPrompt ? [{ role: 'system', content: cfg.systemPrompt }, ...messages] : messages,
       (delta) => { if (!abort.signal.aborted) wc.send('chunk', delta); },
       abort.signal
     );

@@ -1,8 +1,7 @@
 'use strict';
 
 // Generates all app icons as PNGs with zero image dependencies.
-// Design: three lines of "text" with the middle line selected (highlight band)
-// — the Rex gesture, as an icon.
+// Design: the pixel T-Rex on an ink rounded tile — the Rex mark, as an icon.
 
 const fs = require('fs');
 const path = require('path');
@@ -130,11 +129,8 @@ function render(file, size, shapes) {
 
 /* ---------- designs ---------- */
 
-const bar = (y, x0, x1, h, color, alpha) =>
-  ({ x: x0, y: y - h / 2, w: x1 - x0, h, r: h / 2, color, alpha });
-
-// App icon: ink rounded square, three text lines, middle line selected.
-// Logo: an original pixel T-Rex in the offline-runner style.
+// An original pixel T-Rex in the offline-runner style — app icon, tray
+// icon, and logo all render from this one bitmap.
 // '#' = pixel; the eye is the hole at row 1.
 const DINO = [
   '..............########',
@@ -227,4 +223,4 @@ ${bitmapSvgRects(DINO, 64, '#ffffff')}
   console.log('wrote assets/logo.svg, assets/logo-badge.svg');
 }
 
-module.exports = { render, bar, bitmapShapes, DINO };
+module.exports = { render, bitmapShapes, DINO };

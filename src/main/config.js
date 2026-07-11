@@ -6,15 +6,18 @@ const path = require('path');
 
 const DEFAULTS = {
   theme: 'system',       // system | dark | light
-  provider: 'anthropic', // anthropic | openai | google | compatible
-  apiKeys: {},           // { anthropic: '...', openai: '...', google: '...', compatible: '...' }
+  // anthropic | openai | google | mistral | deepseek | xai | groq | openrouter |
+  // ollama | compatible (any other OpenAI-compatible endpoint)
+  provider: 'anthropic',
+  apiKeys: {},           // keyed by provider, e.g. { anthropic: '...', openai: '...' }
   model: 'claude-sonnet-5',
-  baseUrl: '',           // used by "compatible" (OpenAI-compatible: Ollama, Groq, OpenRouter, ...)
+  baseUrl: '',           // used only by "compatible" (custom OpenAI-compatible endpoint)
   systemPrompt:
-    'You are a helpful assistant inside a quick-lookup popup. The user selected a piece of text ' +
-    'on their screen and is asking about it. Answer in a summarized way: a few short sentences ' +
-    'or 2-4 bullets, never more, unless the user explicitly asks for detail. Use markdown. ' +
-    'If the selection is code, assume the question is about that code.',
+    'You are Rex, a quick-lookup assistant in a small popup. The user selected a piece of text ' +
+    'on their screen and is asking about it. Default to summarized answers: a few short ' +
+    'sentences or 2-4 bullets, never more. Only go longer when the user explicitly asks for ' +
+    'more detail, a longer answer, or a deeper conversation. Use markdown. If the selection ' +
+    'is code, assume the question is about that code.',
   trigger: {
     tapCtrl: true        // select text, then tap Ctrl on its own
   },
@@ -37,6 +40,7 @@ function migrateLegacyConfig() {
       if (fs.existsSync(legacy)) {
         fs.mkdirSync(path.dirname(file()), { recursive: true });
         fs.copyFileSync(legacy, file());
+        restrictPermissions();
         return;
       }
     }
@@ -60,11 +64,19 @@ function load() {
   return cached;
 }
 
+// writeFileSync's mode only applies when the file is created, so tighten
+// pre-existing files too. No-op on Windows, where ACLs do the job.
+function restrictPermissions() {
+  if (process.platform === 'win32') return;
+  try { fs.chmodSync(file(), 0o600); } catch { /* best effort */ }
+}
+
 function save(patch) {
   const cfg = load();
   Object.assign(cfg, patch);
   fs.mkdirSync(path.dirname(file()), { recursive: true });
   fs.writeFileSync(file(), JSON.stringify(cfg, null, 2), { mode: 0o600 });
+  restrictPermissions();
   return cfg;
 }
 

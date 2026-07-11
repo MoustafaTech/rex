@@ -23,7 +23,6 @@ function startTrigger(getConfig, shouldIgnore, onTrigger, onDragSelect) {
   let ctrlDown = false;
   let tapSpoiled = false;   // another key or the mouse was used during this Ctrl hold
   let mouseDownPos = null;
-  let dragged = false;
 
   uIOhook.on('keydown', (e) => {
     if (CTRL_CODES.has(e.keycode)) {
@@ -48,21 +47,16 @@ function startTrigger(getConfig, shouldIgnore, onTrigger, onDragSelect) {
   uIOhook.on('mousedown', (e) => {
     if (ctrlDown) tapSpoiled = true; // Ctrl+click is not a tap
     mouseDownPos = { x: e.x, y: e.y };
-    dragged = false;
   });
 
-  uIOhook.on('mousedrag', (e) => {
-    if (!mouseDownPos) return;
-    if (Math.abs(e.x - mouseDownPos.x) + Math.abs(e.y - mouseDownPos.y) > DRAG_THRESHOLD_PX) {
-      dragged = true;
-    }
-  });
-
+  // uiohook-napi has no event for mouse movement while a button is held
+  // (libuiohook's EVENT_MOUSE_DRAGGED is never mapped), so a drag is
+  // detected by how far the pointer travelled between press and release.
   uIOhook.on('mouseup', (e) => {
-    const wasDrag = dragged && mouseDownPos;
+    const start = mouseDownPos;
     mouseDownPos = null;
-    dragged = false;
-    if (!wasDrag) return;
+    if (!start) return;
+    if (Math.abs(e.x - start.x) + Math.abs(e.y - start.y) <= DRAG_THRESHOLD_PX) return;
     // A drag anywhere is a possible new selection — the main process
     // decides whether an open popup should refresh its context.
     if (onDragSelect && !shouldIgnore()) onDragSelect({ x: e.x, y: e.y });

@@ -1,26 +1,42 @@
 'use strict';
 
 // Streaming chat completions against the user's own API keys.
-// Providers: anthropic, openai, google, compatible (any OpenAI-compatible endpoint).
+// Anthropic and Google speak their own protocols; every other provider is an
+// OpenAI-compatible preset (fixed base URL), and "compatible" lets the user
+// point at any endpoint that speaks the same dialect (Ollama, LM Studio, …).
 // Each stream() call yields text deltas via onDelta and resolves when done.
+
+const OPENAI_COMPAT = {
+  openai:     { name: 'OpenAI',     base: 'https://api.openai.com/v1' },
+  mistral:    { name: 'Mistral',    base: 'https://api.mistral.ai/v1' },
+  deepseek:   { name: 'DeepSeek',   base: 'https://api.deepseek.com/v1' },
+  xai:        { name: 'xAI',        base: 'https://api.x.ai/v1' },
+  groq:       { name: 'Groq',       base: 'https://api.groq.com/openai/v1' },
+  openrouter: { name: 'OpenRouter', base: 'https://openrouter.ai/api/v1' },
+  ollama:     { name: 'Ollama',     base: 'http://localhost:11434/v1', keyOptional: true }
+};
+
+function needsKey(provider) {
+  if (provider === 'compatible') return false;
+  return !(OPENAI_COMPAT[provider] || {}).keyOptional;
+}
 
 async function streamChat(cfg, messages, onDelta, signal) {
   const provider = cfg.provider;
   const key = (cfg.apiKeys || {})[provider] || '';
-  if (!key && provider !== 'compatible') {
+  if (!key && needsKey(provider)) {
     throw new Error('No API key set. Open Settings and add your API key.');
   }
-  switch (provider) {
-    case 'anthropic': return anthropic(cfg, key, messages, onDelta, signal);
-    case 'openai': return openaiLike(cfg, key, 'https://api.openai.com/v1', messages, onDelta, signal);
-    case 'google': return google(cfg, key, messages, onDelta, signal);
-    case 'compatible': {
-      const base = (cfg.baseUrl || '').replace(/\/+$/, '');
-      if (!base) throw new Error('Set a Base URL for the OpenAI-compatible provider in Settings.');
-      return openaiLike(cfg, key, base, messages, onDelta, signal);
-    }
-    default: throw new Error(`Unknown provider: ${provider}`);
+  if (provider === 'anthropic') return anthropic(cfg, key, messages, onDelta, signal);
+  if (provider === 'google') return google(cfg, key, messages, onDelta, signal);
+  const preset = OPENAI_COMPAT[provider];
+  if (preset) return openaiLike(cfg, key, preset.base, preset.name, messages, onDelta, signal);
+  if (provider === 'compatible') {
+    const base = (cfg.baseUrl || '').replace(/\/+$/, '');
+    if (!base) throw new Error('Set a Base URL for the OpenAI-compatible provider in Settings.');
+    return openaiLike(cfg, key, base, 'API', messages, onDelta, signal);
   }
+  throw new Error(`Unknown provider: ${provider}`);
 }
 
 async function readSSE(res, onEvent) {
@@ -84,7 +100,7 @@ async function anthropic(cfg, key, messages, onDelta, signal) {
   });
 }
 
-async function openaiLike(cfg, key, base, messages, onDelta, signal) {
+async function openaiLike(cfg, key, base, providerName, messages, onDelta, signal) {
   const headers = { 'content-type': 'application/json' };
   if (key) headers.authorization = `Bearer ${key}`;
   const res = await fetch(`${base}/chat/completions`, {
@@ -98,7 +114,7 @@ async function openaiLike(cfg, key, base, messages, onDelta, signal) {
       stream: true
     })
   });
-  if (!res.ok) throw await httpError(res, cfg.provider === 'openai' ? 'OpenAI' : 'API');
+  if (!res.ok) throw await httpError(res, providerName);
   await readSSE(res, ev => {
     const delta = ev.choices?.[0]?.delta?.content;
     if (delta) onDelta(delta);
@@ -110,11 +126,12 @@ async function google(cfg, key, messages, onDelta, signal) {
   const contents = messages
     .filter(m => m.role !== 'system')
     .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cfg.model)}:streamGenerateContent?alt=sse&key=${encodeURIComponent(key)}`;
+  // Key travels in a header, not the URL, so it never lands in request logs.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cfg.model)}:streamGenerateContent?alt=sse`;
   const res = await fetch(url, {
     method: 'POST',
     signal,
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
     body: JSON.stringify({
       contents,
       systemInstruction: system ? { parts: [{ text: system }] } : undefined,
@@ -128,4 +145,4 @@ async function google(cfg, key, messages, onDelta, signal) {
   });
 }
 
-module.exports = { streamChat };
+module.exports = { streamChat, needsKey };
